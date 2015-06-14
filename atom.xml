@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-06-14T14:04:07.000Z</updated>
+  <updated>2015-06-14T14:08:35.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,9 +20,10 @@
     <link href="http://huntcve.github.io/2015/06/14/uaf/"/>
     <id>http://huntcve.github.io/2015/06/14/uaf/</id>
     <published>2015-06-14T13:48:13.000Z</published>
-    <updated>2015-06-14T14:04:07.000Z</updated>
+    <updated>2015-06-14T14:08:35.000Z</updated>
     <content type="html"><![CDATA[<p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
 <p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持续性增强防范策略（Stack Canary, DEP/NX, ASLR…）不无干系。本文就Android平台一个知名UAF漏洞利用案列(zergRush)进行分析，深度探究UAF漏洞形成的原因及利用方法。</p>
+<a id="more"></a>
 <h1 id="Use_After_Free漏洞定义">Use After Free漏洞定义</h1><p>CWE 给出的定义如下：</p>
 <blockquote>
 <p>引用一段被释放的内存可导致程序崩溃，或处理非预期数值，或执行无干指令。</p>
@@ -100,7 +101,8 @@ char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>mal
 ]]></content>
     <summary type="html">
     <![CDATA[<p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
-<p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持]]>
+<p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持续性增强防范策略（Stack Canary, DEP/NX, ASLR…）不无干系。本文就Android平台一个知名UAF漏洞利用案列(zergRush)进行分析，深度探究UAF漏洞形成的原因及利用方法。</p>]]>
+    
     </summary>
     
       <category term="vulnerability, 漏洞" scheme="http://huntcve.github.io/tags/vulnerability-%E6%BC%8F%E6%B4%9E/"/>
