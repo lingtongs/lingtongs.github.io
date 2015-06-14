@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="Hexo,next" />
+  <meta name="keywords" content="vulnerability, 漏洞," />
 
 
 
@@ -57,7 +57,7 @@
 
 
 
-  <title> Hunt CVE </title>
+  <title> 从zergRush深入理解Use After Free // Hunt CVE </title>
 </head>
 
 <body>
@@ -71,9 +71,7 @@
   </div>
 <![endif]-->
 
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column page-post-detail">
     <div class="headband"></div>
 
     <div id="header" class="header">
@@ -183,9 +181,9 @@
       <div class="main-inner">
         <div id="content" class="content">
           
+
   <div id="posts" class="posts-expand">
     
-      
 
   <div class="post post-type-normal ">
     <div class="post-header">
@@ -196,9 +194,7 @@
           
           
             
-              <a class="post-title-link" href="/2015/06/14/uaf/">
-                从zergRush深入理解Use After Free
-              </a>
+              从zergRush深入理解Use After Free
             
           
         </h1>
@@ -230,8 +226,7 @@
       
 
       
-        
-          <p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
+        <p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
 <p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持续性增强防范策略（Stack Canary, DEP/NX, ASLR…）不无干系。本文就Android平台一个知名UAF漏洞利用案列(zergRush)进行分析，深度探究UAF漏洞形成的原因及利用方法。</p>
 <h1 id="Use_After_Free漏洞定义">Use After Free漏洞定义</h1><p>CWE 给出的定义如下：</p>
 <blockquote>
@@ -308,101 +303,77 @@ char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>mal
 <p>至此四个关键点分析完成，use-after-free的过程也结束了，我们已经能够开始执行任意代码了。 </p>
 <h1 id="总结">总结</h1><p>通过这个案例我们看到，编程人员并没有犯明显的重用悬挂指针错误，但最终还是导致了use-after-free，原因就是因为缓冲区溢出了，并且是指针所在的缓冲区溢出，这就导致溢出的指针超出了程序本身能够掌控的范围，被攻击者利用。同时我们也注意到，该攻击对缓冲区溢出的利用十分聪明，并没有毁坏stack cookie或者是EIP，仅仅溢出了相邻的局部变量的前八个字节，栈帧本身还是完好的，这也是该攻击能够很大程度绕开系统保护措施的主要原因。<br>可以预见，在一定长的时间内，use-after-free还是会成为一种主要的漏洞利用手段。</p>
 
-        
       
     </div>
 
     <div class="post-footer">
       
-
+        <div class="post-tags">
+          
+            <a href="/tags/vulnerability-漏洞/"> #vulnerability, 漏洞 </a>
+          
+        </div>
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/06/13/hello-world/">Hello World</a>
+            
+          </div>
+        </div>
       
-        <div class="post-eof"></div>
+
+      
       
     </div>
   </div>
 
 
+
     
-      
+      <div class="post-spread">
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
+      </div>
+    
 
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/06/13/hello-world/">
-                Hello World
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-06-13
-        </span>
-
+    
+      <div class="comments" id="comments">
         
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/06/13/hello-world/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/06/13/hello-world/"></span>
-            </a>
-          </span>
-          
+          <div class="ds-thread" data-thread-key="2015/06/14/uaf/"
+               data-title="从zergRush深入理解Use After Free" data-url="http://huntcve.github.io/2015/06/14/uaf/">
+          </div>
         
       </div>
-    </div>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </div>
-  </div>
-
-
     
   </div>
 
-  
 
         </div>
 
@@ -423,6 +394,15 @@ char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>mal
   <div id="sidebar" class="sidebar">
     <div class="sidebar-inner">
 
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
       
 
       <div class="site-overview">
@@ -488,6 +468,17 @@ char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>mal
       </div>
 
       
+        <div class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Use_After_Free漏洞定义"><span class="nav-number">1.</span> <span class="nav-text">Use After Free漏洞定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zergRush_(CVE-2011-3874)"><span class="nav-number">2.</span> <span class="nav-text">zergRush (CVE-2011-3874)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关键点一：free任意地址"><span class="nav-number">2.1.</span> <span class="nav-text">关键点一：free任意地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键点二：缓冲区溢出与UAF的关系"><span class="nav-number">2.2.</span> <span class="nav-text">关键点二：缓冲区溢出与UAF的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键点三：为何要寻找带vtable的对象？"><span class="nav-number">2.3.</span> <span class="nav-text">关键点三：为何要寻找带vtable的对象？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键点四：为何二次调用dispatchCommand时strdup(tmp)第一次调用返回的即是FrameworkCommand指针？"><span class="nav-number">2.4.</span> <span class="nav-text">关键点四：为何二次调用dispatchCommand时strdup(tmp)第一次调用返回的即是FrameworkCommand指针？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </div>
+      
 
     </div>
   </div>
@@ -549,6 +540,145 @@ char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>mal
   <script type="text/javascript" src="/js/search-toggle.js"></script>
 
   
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.3" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var $sidebarInner = $('.sidebar-inner');
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.didShow', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+          var self = this;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      $(indicator).velocity('stop').velocity({
+        opacity: action === 'show' ? 0.4 : 0
+      }, { duration: 100 });
+    }
+
+  });
+</script>
+
+
+  <script type="text/javascript" id="sidebar.nav">
+    $(document).ready(function () {
+      var html = $('html');
+
+      $('.sidebar-nav li').on('click', function () {
+        var item = $(this);
+        var activeTabClassName = 'sidebar-nav-active';
+        var activePanelClassName = 'sidebar-panel-active';
+        if (item.hasClass(activeTabClassName)) {
+          return;
+        }
+
+        var currentTarget = $('.' + activePanelClassName);
+        var target = $('.' + item.data('target'));
+
+        currentTarget.velocity('transition.slideUpOut', 200, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', 200)
+            .addClass(activePanelClassName);
+        });
+
+        item.siblings().removeClass(activeTabClassName);
+        item.addClass(activeTabClassName);
+      });
+
+      $('.post-toc a').on('click', function (e) {
+        e.preventDefault();
+        var offset = $(escapeSelector(this.getAttribute('href'))).offset().top;
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        });
+      });
+
+      // Expand sidebar on post detail page by default, when post has a toc.
+      var $tocContent = $('.post-toc-content');
+      if (isDesktop() && CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    });
+  </script>
+
+
+
 
   <script type="text/javascript">
     $(document).ready(function () {

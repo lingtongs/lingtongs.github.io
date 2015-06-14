@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-06-13T08:34:04.000Z</updated>
+  <updated>2015-06-14T14:04:07.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -14,6 +14,98 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[从zergRush深入理解Use After Free]]></title>
+    <link href="http://huntcve.github.io/2015/06/14/uaf/"/>
+    <id>http://huntcve.github.io/2015/06/14/uaf/</id>
+    <published>2015-06-14T13:48:13.000Z</published>
+    <updated>2015-06-14T14:04:07.000Z</updated>
+    <content type="html"><![CDATA[<p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
+<p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持续性增强防范策略（Stack Canary, DEP/NX, ASLR…）不无干系。本文就Android平台一个知名UAF漏洞利用案列(zergRush)进行分析，深度探究UAF漏洞形成的原因及利用方法。</p>
+<h1 id="Use_After_Free漏洞定义">Use After Free漏洞定义</h1><p>CWE 给出的定义如下：</p>
+<blockquote>
+<p>引用一段被释放的内存可导致程序崩溃，或处理非预期数值，或执行无干指令。</p>
+</blockquote>
+<p>扩展描述中有如下阐述：</p>
+<blockquote>
+<p>使用被释放的内存可带来诸多不利后果，根据具体实例和缺陷发生时机，轻则导致程序合法数据被破坏，重则可执行任意指令。最简单的导致数据被破坏的场景是系统对被释放内存进行了重利用。<br>UAF错误一般有两种原因导致：<br>•导致程序出错和发生异常的各种条件<br>•程序负责释放内存的指令发生混乱<br>问题内存在被释放后，在某个时间点又被合法地分配给了其他的指针，随后，这块内存释放之前的指针又被重新使用并且指向了新分配的同一内存的某个区域，但该段内存的数据已经发生变化，所有就造成了释放前指针对象的数据被破坏，这会导致程序行为未知。<br>如果碰巧这块问题内存新分配的数据是比如C++中的类，那这块内存堆上可能散落着各种函数指针，只要用shellcode的地址覆盖其中一个函数指针，就能够达成执行任意指令。 </p>
+</blockquote>
+<p>一个典型的UAF错误如下： </p>
+<pre><code><span class="comment">//Example code, Language: C</span>
+char<span class="built_in">*</span> ptr = <span class="params">(char*)</span>malloc <span class="params">(SIZE)</span>;
+<span class="keyword">if</span> <span class="params">(err)</span> {
+    abrt = <span class="number">1</span>;
+    free<span class="params">(ptr)</span>;
+}
+...
+<span class="keyword">if</span> <span class="params">(abrt)</span> {
+    logError<span class="params">(<span class="string">"operation aborted before commit"</span>, ptr)</span>;
+}
+</code></pre><p>这里一旦错误发生，内存立刻被free，但内存指针ptr随后却被重新使用，从而引发错误。如果ptr在使用之前程序调用内存分配器申请内存并赋值给其他类型或对象指针，很有可能内存分配器分配的是同一块内存，结果就造成了两个不同类型的指针指向同一块内存，产生了混乱。根据程序实现的特定逻辑，这种混乱可能会使得恶意攻击成为可能，并且可以绕开传统的系统防御策略，如：stack cookie, DEP, ASLR。<br>这个例子是最简单的一种UAF错误场景，产生的原因是引用了悬挂指针（Dangling pointer）。如果在指针free后及时置NULL,那么对NULL指针的任何应用将导致程序终止，从而避免恶意利用的发生。<br>那是不是只要指针被释放后置NULL就可以避免产生UAF漏洞了？答案显然是NO。<br>CWE提供的对该漏洞的潜在缓解策略如下： </p>
+<ul>
+<li>选择具有自动内存管理功能的编程语言   </li>
+<li>释放内存时务必置空指针。尽管如此，这种方法对针对多重或复杂数据结构利用的有效性有限 </li>
+</ul>
+<p>简言之，如果你不是用的像Java这样具有自动内存管理功能的高级语言，而是C/C++这样的需要自己管理内存的语言，即使没有犯明显的重用悬挂指针错误，一样也可能遭受UAF攻击。<br>这对C/C++编程者来说可能是个噩耗。事实上，UAF漏洞的攻击也确实基本都是针对C/C++这类原生程序的攻击，比如各类浏览器， ActiveX插件，操作系统等。下面我们结合一个在Android系统上知名的UAF漏洞利用（zergRush）案例深入分析一下这种攻击的原理和场景。 </p>
+<h1 id="zergRush_(CVE-2011-3874)">zergRush (CVE-2011-3874)</h1><p>CVE-2011-3874是Android系统早期一个著名的漏洞，被Revolutionary 小组用来集成在zergRush工具中对Android2.2-2.3版本进行ROOT提权。网上对该漏洞的原理分析并不多，<a href="http://www.2cto.com/Article/201410/339738.html" target="_blank" rel="external">zergRush (CVE-2011-3874)提权漏洞分析</a>算是讲的比较具体的，但有几个关键点没有讲清楚，导致初学者可能不太容易理解，并且这几个关键点是整个漏洞利用的精髓，涉及到UAF产生和利用的原理，因此有必要在这里重新交代一下，以便更好地理解UAF，当然，直接看懂了的可略过。 </p>
+<p>不赘述，直接进入要点： </p>
+<h2 id="关键点一：free任意地址">关键点一：free任意地址</h2><p>use-after-free, 第一步，自然是free。只有能够free掉任意地址，才能利用任意地址，进而做更“龌蹉”的事情。 如果只能free固定地址，对现代的操作系统来说威胁并不大，漏洞进一步利用的空间也不大。要实现free任意地址，就需要指针的值即指针本身所在的栈空间（不是指针指向的堆空间）是可控的。但是程序中指针的值都是strdup返回的，这是内存分配器控制的，我们如何干预呢？<br>argv[argc++] = strdup(tmp);</p>
+<p>这就涉及到第二个关键点，缓冲区溢出的用途。 </p>
+<h2 id="关键点二：缓冲区溢出与UAF的关系">关键点二：缓冲区溢出与UAF的关系</h2><p>代码其实有两个缓冲区溢出漏洞，一个是字符指针数组argv，一个是字符数组tmp。这里只利用了argv，因为我们要free指针。argv是有16个元素的字符指针数组，按道理只要给它输入17个元素即可溢出且最后一个元素会覆盖到tmp数组的前四个字节，那为何原文要构造18个参数传入呢？<br>“cmd p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 \x78\x56\x34\x12”</p>
+<p>既然p16就已经溢出到了tmp内存，为何不把任意地址放在这里而要放在后一位？其实作者在这里没有交代清楚，我们先看一下这个函数的源码（略去了无关部分）： </p>
+<pre><code><span class="keyword">void</span> FrameworkListener::dispatchCommand(SocketClient *cli, <span class="keyword">char</span> *data) {      
+    FrameworkCommandCollection::iterator i;                                   
+    <span class="keyword">int</span> argc = <span class="number">0</span>;                                                             
+    <span class="keyword">char</span> *argv[FrameworkListener::CMD_ARGS_MAX];                              
+    <span class="keyword">char</span> tmp[<span class="number">255</span>];                                                            
+    <span class="keyword">char</span> *p = data;                                                           
+    <span class="keyword">char</span> *q = tmp;                                                            
+    <span class="keyword">bool</span> esc = <span class="keyword">false</span>;                                                         
+    <span class="keyword">bool</span> quote = <span class="keyword">false</span>;                                                       
+    <span class="keyword">int</span> k;                                                                    
+
+    <span class="built_in">memset</span>(argv, <span class="number">0</span>, <span class="keyword">sizeof</span>(argv));                                            
+    <span class="built_in">memset</span>(tmp, <span class="number">0</span>, <span class="keyword">sizeof</span>(tmp));                                              
+    <span class="keyword">while</span>(*p) {                                                               
+        ...  
+
+        *q = *p++; 
+        <span class="comment">//参数截取分支                                                          </span>
+        <span class="keyword">if</span> (!quote &amp;&amp; *q == <span class="string">' '</span>) {                                           
+            *q = <span class="string">'\0'</span>;                                                       
+            argv[argc++] = strdup(tmp);                                      
+            <span class="built_in">memset</span>(tmp, <span class="number">0</span>, <span class="keyword">sizeof</span>(tmp));                                     
+            q = tmp;                                                         
+            <span class="keyword">continue</span>;                                                        
+        }                                                                    
+        q++;                                                                 
+    }                                                                        
+
+    argv[argc++] = strdup(tmp);                                              
+    ....                                                                           
+    <span class="keyword">int</span> j;                                                                   
+    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; argc; j++)                                               
+        <span class="built_in">free</span>(argv[j]);                                                       
+    <span class="keyword">return</span>;
+} 
+</code></pre><p>程序是用空格来分割解析参数的，当解析到第16个空格（即p15 p16之间）的时候，tmp里存的是p15，内存分配器在堆上分配一块新的内存写入p15并把地址赋给argv[15]，随后将tmp数组清空，若参数到p16截止，则while循环不会再进入参数截取分支，读完p16后while结束，此时tmp存的是p16，最后一条strdup会将p16所在的堆的地址写到argv[16],即tmp数组首地址（头4个字节）。这样整个解析流程结束，cmd到p15的堆指针写到了argv[0-15]中，p16的堆地址写到了tmp的前四个字节中，这样任然没办法控制free任意地址，因为argv的17个指针都是strdup返回的,内存布局如下：<br><img src="/uaf/uaf_input_17.jpg" alt="输入17个参数" title="输入17个参数]"> </p>
+<p>但如果是18个参数，即p16后还有一个参数（这里是\x78\x56\x34\x12），那while循环会继续解析p16和\x78\x56\x34\x12之间的空格，此时tmp存的是p16，内存分配器在堆上分配一块新的内存写入p16并把地址赋给argv[16]，即tmp的前四个字节，同时清空tmp，意味着刚才的地址被置0. 然后程序继续读入\x78\x56\x34\x12到tmp，并且不会进入参数截取分支，跳出while，此时tmp前四字节存的是0x78,0x56,0x34,0x12，即argv[16]指针的值。最后一条strdup将开辟一个新的堆空间并写入\x78\x56\x34\x12，同时将地址赋值给arg[17]，即tmp[4] - tmp[7],不影响tmp[0]-tmp[3]. 至此，argv[0-15]和argv[17]存的都是strdup返回的地址，只有argv[16]存的是我们输入的地址，即0x12345678，达成free任意地址的目的，内存布局如下：<br><img src="/uaf/uaf_input_18.jpg" alt="输入18个参数" title="输入18个参数"> </p>
+<p>简单的理解，当输入17个参数时，最后一个参数虽然会被写入tmp前四字节，但随即被堆指针覆盖；当输入参数大于17时，最后一个参数被写入tmp前四字节，不会被覆盖，之后的内存才被覆盖。以下是输入19个参数时的内存布局：<br><img src="/uaf/uaf_input_19.jpg" alt="输入19个参数" title="输入19个参数">  </p>
+<p>因此，利用缓冲区溢出的根本目的是将溢出的指针所在的内存写入我们的输入，即间接给溢出指针赋值，这个过程是与程序实现逻辑息息相关的，18个参数不多不少，刚好满足需求，因地制宜地构造输入，这也是攻击的精髓。 </p>
+<h2 id="关键点三：为何要寻找带vtable的对象？">关键点三：为何要寻找带vtable的对象？</h2><p>实际上当我们能够控制free任意指针时，基本能够实现劫持任何对象，这里使用带vtable的FrameworkCommand对象，一方面是因为在函数内部直接调用了该对象的虚函数runCommand,攻击方便，只需对同一函数构造输入二次调用即可，另一方面，带虚函数的对象，vtable的指针都放在对象内存的最前面，也就是我们构造的任意地址，这就使得对象的虚表直接被我们劫持，进而可用任意shellcode地址去覆盖对象的任何函数指针，达到了执行任意代码的目的。</p>
+<h2 id="关键点四：为何二次调用dispatchCommand时strdup(tmp)第一次调用返回的即是FrameworkCommand指针？">关键点四：为何二次调用dispatchCommand时strdup(tmp)第一次调用返回的即是FrameworkCommand指针？</h2><p>这取决于内存分配器。Android使用的dlmalloc是一个高效的内存分配器。在某些情况下内存被free后不会马上释放回内核，而是保留给应用程序重新申请。这使得被我们free掉的任意内存，在紧接着下一次分配的过程中，有很大肯能被重新分配使用。第一次strdup正是导致了这样的结果，不同类型的指针指向了同一块内存，当我们用新指针向这块内存写入任意数据的同时，也在覆盖原指针所指向的数据结构。而当原指针复用时，攻击便发生了。这就是use-after-free中的use。 </p>
+<p>至此四个关键点分析完成，use-after-free的过程也结束了，我们已经能够开始执行任意代码了。 </p>
+<h1 id="总结">总结</h1><p>通过这个案例我们看到，编程人员并没有犯明显的重用悬挂指针错误，但最终还是导致了use-after-free，原因就是因为缓冲区溢出了，并且是指针所在的缓冲区溢出，这就导致溢出的指针超出了程序本身能够掌控的范围，被攻击者利用。同时我们也注意到，该攻击对缓冲区溢出的利用十分聪明，并没有毁坏stack cookie或者是EIP，仅仅溢出了相邻的局部变量的前八个字节，栈帧本身还是完好的，这也是该攻击能够很大程度绕开系统保护措施的主要原因。<br>可以预见，在一定长的时间内，use-after-free还是会成为一种主要的漏洞利用手段。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>古语“道高一尺，魔高一丈”，用在如今的安全领域十分的恰如其分。</p>
+<p>Use After Free(UAF)类型的漏洞近些年特别活跃，从WEB到桌面到移动端，屡屡被暴露于各种设备、平台、软件之中，究其原因，恐怕与系统软件厂商在针对传统型漏洞如缓冲区溢出等方面所作的持]]>
+    </summary>
+    
+      <category term="vulnerability, 漏洞" scheme="http://huntcve.github.io/tags/vulnerability-%E6%BC%8F%E6%B4%9E/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hello World]]></title>
