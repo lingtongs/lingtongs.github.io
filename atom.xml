@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-10-28T02:38:22.000Z</updated>
+  <updated>2015-10-28T02:56:11.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,53 +20,12 @@
     <link href="http://huntcve.github.io/2015/07/12/cveupdate/"/>
     <id>http://huntcve.github.io/2015/07/12/cveupdate/</id>
     <published>2015-07-12T03:08:39.000Z</published>
-    <updated>2015-10-28T02:38:22.000Z</updated>
-    <content type="html"><![CDATA[<table>
-<thead>
-<tr>
-<th>Project</th>
-<th>Module</th>
-<th>CVE</th>
-<th>Severity</th>
-<th>Type</th>
-<th>Date</th>
-<th>Description</th>
-<th>Links</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Apache</td>
-<td>Cordova</td>
-<td>CVE-2015-1835</td>
-<td>High</td>
-<td>RCE</td>
-<td>2015.4.30</td>
-<td>Configuration from non-checked intent lead to remote exploit of Cordova framework</td>
-<td>blog</td>
-</tr>
-<tr>
-<td>Android</td>
-<td>MMS</td>
-<td>CVE-2015-3839</td>
-<td>Low</td>
-<td>DoS</td>
-<td>2015.6.4</td>
-<td>Messaging app DoS</td>
-<td>blog</td>
-</tr>
-<tr>
-<td>Android</td>
-<td>MMS</td>
-<td>CVE-2015-3840</td>
-<td>Low</td>
-<td>DoS</td>
-<td>2015.6.4</td>
-<td>MMS/SMS status modify without “WRITE_SMS” permission</td>
-<td>blog</td>
-</tr>
-</tbody>
-</table>
+    <updated>2015-10-28T02:56:11.000Z</updated>
+    <content type="html"><![CDATA[<div markdown="1"><br><table><br><tr><br><th>Project</th><br><th>Module</th><br><th>CVE</th><br><th>Severity</th><br><th>Type</th><br><th>Date</th><br><th>Description</th><br><th>Links</th><br></tr><br><br><tr><br><td>Apache</td><br><td>Cordova</td><br><td>CVE-2015-1835</td><br><td>High</td><br><td>RCE</td><br><td>2015.4.30</td><br><td>Configuration from non-checked intent lead to remote exploit of Cordova framework</td><br><td>blog</td><br></tr><br><br><tr><br><td>Android</td><br><td>MMS</td><br><td>CVE-2015-3839</td><br><td>Low</td><br><td>DoS</td><br><td>2015.6.4</td><br><td>Messaging app DoS</td><br><td>blog</td><br></tr><br><br><tr><br><td>Android</td><br><td>MMS</td><br><td>CVE-2015-3840</td><br><td>Low</td><br><td>Privilege Elevation</td><br><td>2015.6.4</td><br><td>MMS/SMS status modify without “WRITE_SMS” permission</td><br><td>blog</td><br></tr><br></table><br></div>
+
+
+
+
 <p>Apache: </p>
 <blockquote>
 <p>CVE-2015-1835 (H)    </p>
@@ -77,17 +36,7 @@
 </blockquote>
 ]]></content>
     <summary type="html">
-    <![CDATA[<table>
-<thead>
-<tr>
-<th>Project</th>
-<th>Module</th>
-<th>CVE</th>
-<th>Severity</th>
-<th>Type</th>
-<th>Date</th>
-<th>Description</th>
-<th>Li]]>
+    <![CDATA[<div markdown="1"><br><table><br><tr><br><th>Project</th><br><th>Module</th><br><th>CVE</th><br><th>Severity</th><br><th>Type</th><br><th>Da]]>
     </summary>
     
       <category term="CVE" scheme="http://huntcve.github.io/tags/CVE/"/>
