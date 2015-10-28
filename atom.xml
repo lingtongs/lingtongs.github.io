@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-10-14T09:32:30.000Z</updated>
+  <updated>2015-10-28T01:27:56.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,8 +20,22 @@
     <link href="http://huntcve.github.io/2015/07/12/cveupdate/"/>
     <id>http://huntcve.github.io/2015/07/12/cveupdate/</id>
     <published>2015-07-12T03:08:39.000Z</published>
-    <updated>2015-10-14T09:32:30.000Z</updated>
-    <content type="html"><![CDATA[<p>Apache: </p>
+    <updated>2015-10-28T01:27:56.000Z</updated>
+    <content type="html"><![CDATA[<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sdfsdf</td>
+<td>sdfdf</td>
+</tr>
+</tbody>
+</table>
+<p>Apache: </p>
 <blockquote>
 <p>CVE-2015-1835 (H)    </p>
 </blockquote>
@@ -31,13 +45,21 @@
 </blockquote>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>Apache: </p>
-<blockquote>
-<p>CVE-2015-1835 (H)    </p>
-</blockquote>
-<p>Android:  </p>
-<blockquote>
-<p>CVE-2015-3839(L)<br>CVE-2015-3840(]]>
+    <![CDATA[<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sdfsdf</td>
+<td>sdfdf</td>
+</tr>
+</tbody>
+</table>
+<p>]]>
     </summary>
     
       <category term="CVE" scheme="http://huntcve.github.io/tags/CVE/"/>
