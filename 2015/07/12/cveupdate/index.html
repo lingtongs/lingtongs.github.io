@@ -57,7 +57,7 @@
 
 
 
-  <title> 更新一下近期发现的几个CVE // 深挖洞，广积粮，不称霸 </title>
+  <title> Hunted CVEs in 2015 // 深挖洞，广积粮，不称霸 </title>
 </head>
 
 <body>
@@ -194,7 +194,7 @@
           
           
             
-              更新一下近期发现的几个CVE
+              Hunted CVEs in 2015
             
           
         </h1>
@@ -226,7 +226,94 @@
       
 
       
-        <div><table><br><tr><br><th markdown="1">Project</th><br><th markdown="1">Module</th><br><th markdown="1">CVE</th><br><th markdown="1">Severity</th><br><th markdown="1">Type</th><br><th markdown="1">Date</th><br><th markdown="1">Description</th><br><th markdown="1">Links</th><br></tr><br><br><tr><br><td>Apache</td><br><td>Cordova</td><br><td>CVE-2015-1835</td><br><td>High</td><br><td>RCE</td><br><td>2015.4.30</td><br><td>Configuration from non-checked intent lead to remote exploit of Cordova framework</td><br><td>blog</td><br></tr><br><br><tr><br><td>Android</td><br><td>MMS</td><br><td>CVE-2015-3839</td><br><td>Low</td><br><td>DoS</td><br><td>2015.6.4</td><br><td>Messaging app DoS</td><br><td>blog</td><br></tr><br><br><tr><br><td>Android</td><br><td>MMS</td><br><td>CVE-2015-3840</td><br><td>Low</td><br><td>Privilege Elevation</td><br><td>2015.6.4</td><br><td>MMS/SMS status modify without “WRITE_SMS” permission</td><br><td>blog</td><br></tr><br></table><br></div>
+        <p>Update:2015.10.28<br><a id="more"></a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Project</th>
+<th style="text-align:center">Module</th>
+<th style="text-align:center">CVE</th>
+<th style="text-align:center">Severity</th>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">Date</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Links</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Apache</td>
+<td style="text-align:center">Cordova</td>
+<td style="text-align:center">CVE-2015-1835</td>
+<td style="text-align:center">High</td>
+<td style="text-align:center">RCE</td>
+<td style="text-align:center">2015.4.30</td>
+<td style="text-align:center">Remote modify Cordova configurations</td>
+<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/trend-micro-discovers-apache-vulnerability-that-allows-one-click-modification-of-android-apps/" target="_blank" rel="external">blog</a>, <a href="https://github.com/huntcve/CVE/tree/master/CVE-2015-1835" target="_blank" rel="external">poc</a></td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">MMS</td>
+<td style="text-align:center">CVE-2015-3839</td>
+<td style="text-align:center">Low</td>
+<td style="text-align:center">DoS</td>
+<td style="text-align:center">2015.6.4</td>
+<td style="text-align:center">Messaging app DoS</td>
+<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">blog</a>,poc</td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">MMS</td>
+<td style="text-align:center">CVE-2015-3840</td>
+<td style="text-align:center">Low</td>
+<td style="text-align:center">Bypass</td>
+<td style="text-align:center">2015.6.4</td>
+<td style="text-align:center">MMS/SMS status modify</td>
+<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">blog</a>,poc</td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">Bluethooth</td>
+<td style="text-align:center">CVE-2015-3847</td>
+<td style="text-align:center">Moderate</td>
+<td style="text-align:center">Bypass,DoS</td>
+<td style="text-align:center">2015.7.6</td>
+<td style="text-align:center">Arbitrary SMS removal</td>
+<td style="text-align:center">blog,poc</td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">Phone</td>
+<td style="text-align:center">CVE-2015-3851</td>
+<td style="text-align:center">Low</td>
+<td style="text-align:center">Bypass,DoS</td>
+<td style="text-align:center">2015.7.13</td>
+<td style="text-align:center">Phone DoS/SIP profile removal</td>
+<td style="text-align:center">blog,poc</td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">GPS</td>
+<td style="text-align:center">CVE-2015-3852</td>
+<td style="text-align:center">Low</td>
+<td style="text-align:center">DoS</td>
+<td style="text-align:center">2015.7.15</td>
+<td style="text-align:center">Device continue reboot</td>
+<td style="text-align:center">blog,poc</td>
+</tr>
+<tr>
+<td style="text-align:center">Android</td>
+<td style="text-align:center">StageFright</td>
+<td style="text-align:center">CVE-2015-6600</td>
+<td style="text-align:center">Critical</td>
+<td style="text-align:center">RCE</td>
+<td style="text-align:center">2015.7.31</td>
+<td style="text-align:center">Heap buffer overflow</td>
+<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/android-security-update-includes-fix-for-stagefright-vulnerabilities-discovered-by-trend-micro/" target="_blank" rel="external">blog</a></td>
+</tr>
+</tbody>
+</table>
+
       
     </div>
 
@@ -291,7 +378,7 @@
       <div class="comments" id="comments">
         
           <div class="ds-thread" data-thread-key="2015/07/12/cveupdate/"
-               data-title="更新一下近期发现的几个CVE" data-url="http://huntcve.github.io/2015/07/12/cveupdate/">
+               data-title="Hunted CVEs in 2015" data-url="http://huntcve.github.io/2015/07/12/cveupdate/">
           </div>
         
       </div>
