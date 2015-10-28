@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-10-28T02:09:11.000Z</updated>
+  <updated>2015-10-28T02:22:29.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,16 +20,16 @@
     <link href="http://huntcve.github.io/2015/07/12/cveupdate/"/>
     <id>http://huntcve.github.io/2015/07/12/cveupdate/</id>
     <published>2015-07-12T03:08:39.000Z</published>
-    <updated>2015-10-28T02:09:11.000Z</updated>
+    <updated>2015-10-28T02:22:29.000Z</updated>
     <content type="html"><![CDATA[<table>
 <thead>
 <tr>
 <th>Project</th>
 <th>Module</th>
-<th>CVE Number</th>
+<th>CVE</th>
 <th>Severity</th>
 <th>Type</th>
-<th>Disclose Date</th>
+<th>Date</th>
 <th>Description</th>
 <th>Links</th>
 </tr>
@@ -82,11 +82,12 @@
 <tr>
 <th>Project</th>
 <th>Module</th>
-<th>CVE Number</th>
+<th>CVE</th>
 <th>Severity</th>
 <th>Type</th>
-<th>Disclose Date</th>
-<th>Descrip]]>
+<th>Date</th>
+<th>Description</th>
+<th>Li]]>
     </summary>
     
       <category term="CVE" scheme="http://huntcve.github.io/tags/CVE/"/>
