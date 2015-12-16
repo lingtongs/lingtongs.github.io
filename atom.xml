@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-11-03T08:29:56.000Z</updated>
+  <updated>2015-12-16T08:50:25.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -14,6 +14,131 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[一步一步调通stagefright exploit]]></title>
+    <link href="http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/"/>
+    <id>http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/</id>
+    <published>2015-12-16T04:58:48.000Z</published>
+    <updated>2015-12-16T08:50:25.000Z</updated>
+    <content type="html"><![CDATA[<p>古语云：“蒙惠者虽知其然，而未必知其所以然也”。在漏洞利用的学习方面，我们不能只知其然，而必须知其所以然，才能真正掌握利用的精髓，以便学以致用。</p>
+<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefirght无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
+<p>目前关于libstagefright开源的exploit有两个版本，一个是jduck公布的<a href="https://blog.zimperium.com/the-latest-on-stagefright-cve-2015-1538-exploit-is-now-available-for-testing-purposes/" target="_blank" rel="external">exploit1</a>,另外一个是谷歌公布的<a href="https://code.google.com/p/google-security-research/issues/attachmentText?id=502&amp;aid=5020005000&amp;name=mp4_stagefright_release.py&amp;token=ABZ6GAdoREMO07ZRfflSFlJct3GtBbtypg%3A1450243091152" target="_blank" rel="external">exploit2</a>。这其中谷歌的版本做法比较精致，精确控制了内存布局，具体可以参见project zero的<a href="http://googleprojectzero.blogspot.tw/2015/09/stagefrightened.html" target="_blank" rel="external">博客</a>。Jduck的版本，网上没有过多的分析文章，乌云上有<a href="http://drops.wooyun.org/papers/10896" target="_blank" rel="external">一篇</a>只分析了一半，很关键的前期内存布局控制及触发点分析没有覆盖到，且作者似乎只是从静态角度分析了exploit chain的调用原理，这对于初学者想要彻底弄清楚整个利用的原理，还显不够。</p>
+<p>本文从纯动态调试角度彻底阐述清楚该exploit的原理以及其所包含的问题。</p>
+<h1 id="源码分析">源码分析</h1><p>在着手调试之前，我们先要分析一下Exploit源码。只有弄懂了代码，调试才能事半功倍。<br>Exploit利用的漏洞是CVE-2015-1538，具体对应的安卓部分代码如下：  </p>
+<pre><code>status_t SampleTable::setSampleToChunkParams<span class="params">(off64_t data_offset, size_t data_size)</span> {
+<span class="keyword">if</span> <span class="params">(mSampleToChunkOffset &gt;= <span class="number">0</span>)</span> {
+    return ERROR_MALFORMED;
+}
+mSampleToChunkOffset = data_offset;
+<span class="keyword">if</span> <span class="params">(data_size &lt; <span class="number">8</span>)</span> {
+    return ERROR_MALFORMED;
+}
+uint8_t header[<span class="number">8</span>];
+<span class="keyword">if</span> <span class="params">(mDataSource-&gt;readAt<span class="params">(
+            data_offset, header, sizeof<span class="params">(header)</span>)</span> &lt; <span class="params">(ssize_t)</span>sizeof<span class="params">(header)</span>)</span> {
+    return ERROR_IO;
+}
+<span class="keyword">if</span> <span class="params">(U32_AT<span class="params">(header)</span> != <span class="number">0</span>)</span> {
+    <span class="comment">// Expected version = 0, flags = 0.</span>
+    return ERROR_MALFORMED;
+}
+mNumSampleToChunkOffsets = U32_AT<span class="params">(&amp;header[<span class="number">4</span>])</span>;
+<span class="keyword">if</span> <span class="params">(data_size &lt; <span class="number">8</span> + mNumSampleToChunkOffsets * <span class="number">12</span>)</span> {
+    return ERROR_MALFORMED;
+}
+mSampleToChunkEntries =
+    new SampleToChunkEntry[mNumSampleToChunkOffsets]; ----&gt; heap overflow
+<span class="keyword">for</span> <span class="params">(uint32_t i = <span class="number">0</span>; i &lt; mNumSampleToChunkOffsets; ++i)</span> {
+    uint8_t buffer[<span class="number">12</span>];
+    <span class="keyword">if</span> <span class="params">(mDataSource-&gt;readAt<span class="params">(
+                mSampleToChunkOffset + <span class="number">8</span> + i * <span class="number">12</span>, buffer, sizeof<span class="params">(buffer)</span>)</span>
+            != <span class="params">(ssize_t)</span>sizeof<span class="params">(buffer)</span>)</span> {
+        return ERROR_IO;
+    }
+    CHECK<span class="params">(U32_AT<span class="params">(buffer)</span> &gt;= <span class="number">1</span>)</span>;  <span class="comment">// chunk index is 1 based in the spec.</span>
+    <span class="comment">// We want the chunk index to be 0-based.</span>
+    mSampleToChunkEntries[i].startChunk = U32_AT<span class="params">(buffer)</span> - <span class="number">1</span>;
+    mSampleToChunkEntries[i].samplesPerChunk = U32_AT<span class="params">(&amp;buffer[<span class="number">4</span>])</span>;
+    mSampleToChunkEntries[i].chunkDesc = U32_AT<span class="params">(&amp;buffer[<span class="number">8</span>])</span>;
+}
+return OK;
+}
+</code></pre><p>其中在分配内存的时候会造成堆溢出，具体原理不再赘述。<br>在Exploit源码中，首先定义了两个地址：  </p>
+<pre><code><span class="comment"># The address of a fake StrongPointer object (sprayed)</span>
+<span class="variable">sp_addr =</span> <span class="number">0</span>x41d00010 <span class="comment"># takju @ imm76i – 2MB (via hangouts)</span>
+
+<span class="comment"># The address to of our ROP pivot</span>
+<span class="variable">newpc_val =</span> <span class="number">0</span>xb0002850 <span class="comment"># point sp at __dl_restore_core_regs</span>
+</code></pre><p>其中sp_addr是heap spray后单个buffer的起始地址，newpc_val是god gadget restore_core_regs (libc.so中)的起始地址，具体用作stack pivot. 因为Exploit默认在ASLR disable的情况下工作，因此作者就hardcode了这两个地址。需要说明的是如果你在不同的device测试，这两个地址可能不一样。  </p>
+<p>定义好了这两个地址后，就开始创建crack mp4文件。其中首先会把用来做Heap spray的buffer通过tx3g这个Box写进去：  </p>
+<pre><code>page = page[:off] + rop + page[off+len<span class="params">(rop)</span>:] 
+spray = page <span class="built_in">*</span> <span class="params">(<span class="params">(<span class="params">(<span class="number">2</span>*<span class="number">1024</span>*<span class="number">1024</span>)</span> / len<span class="params">(page)</span>)</span> – <span class="number">20</span>)</span> 
+moov_data += make_chunk<span class="params">(‘tx3g’, spray)</span>
+</code></pre><p>一共2M左右。单个buffer中包含这几部分数据：</p>
+<ul>
+<li>decStrong指令需要的相关寄存器数据（用来跳转到ROP）  </li>
+<li>restore_core_regs需要的相关寄存器数据（ROP起始，栈翻转）</li>
+<li>mprotect需要的相关寄存器数据（堆可执行）</li>
+<li>Shellcode</li>
+<li>一些其他gadget和补齐数据   </li>
+</ul>
+<p>需要注意的是，Exploit中tx3g生成的这个堆是放在第一个trak里面的，这会有问题。如果你在调试的过程中发现走到decStrong中必定发生crash,就是由于这个原因导致的，具体后面分析。  </p>
+<p>Spray的内容准备好了之后，Exploit中生成了一堆各种各样的data box，这里的作用其实是试图生成堆空隙，以便后面分配的堆能够最终落到前面，为Overwrite提供可能。因为从代码看，造成溢出的堆其实是在最后的stsc 这个box解析时分配的，为了避免溢出后没东西可覆盖，需要在前面分配的各种堆中产生空隙，这样才有可能造成最后分配的堆反而跑到前面。安卓代码在解析这些box的时候都会生成临时堆，解析完后即free掉，另外，对同样的box，在第二次解析时会free掉第一次分配的内存（参考MetaData::setData），这两个原因导致这一堆data box解析结束后，在相关位置会留下堆空隙供后续溢出堆使用。 说到这里，解释一下为什么前面说谷歌的版本比较精致，就在于对这块堆布局的处理上，做的比较妥当，基本能保证溢出堆后面必有一个可以被用来利用的对象。而Jduck这个版本，并不能做这种保证，只是提供了可能。在调试的过程中证明了这点，溢出堆跑到前面的概率大概50%左右。  </p>
+<p>最后，生成第二个trak，并塞入恶意的stsc box，触发堆溢出：</p>
+<pre><code><span class="comment"># Build the nasty sample table to trigger the vulnerability here. </span>
+stbl1 = make_stsc(<span class="number">3</span>, (<span class="number">0</span>x1200 / <span class="number">0</span>xc) – <span class="number">1</span>, sp_addr, <span class="keyword">True</span>) <span class="comment"># TRIGGER  </span>
+</code></pre><p>这里最终会导致溢出堆之后的0x1200个字节被填入sp_addr。这里的0x1200已经超过了一个内存页，这个值可能是根据调试的device所设定的。无论如何一股脑溢出超过一个内存页却不希望导致crash这个做法其实挺坑爹的。我在调试的过程中发现，设这么大的值，很容易导致sample table对象被覆盖，于是溢出之后的循环还没跑完就crash了，根本跑不到析构函数里面去。  </p>
+<p>到这里总结一下，作者是希望通过对象析构时调用decStrong来触发exploit chain。这就需要保证整个过程不能crash。另外，为了保证进入decStrong后 r0(this)指向sp_addr, 就需要能够覆盖对象指针，这个指针我反复调试之后，确定为只能是sample table指针，位于trac对象中。当然不同的机型也可能不一样，需要测试。  </p>
+<h1 id="问题">问题</h1><p>在调试的过程中，过于信任Exploit源码，没有去质疑而被误导，走了不少弯路。这里把Jduck的源码中的问题罗列一下：</p>
+<ul>
+<li>ROP起始地址问题<br>调试的过程中发现指令走到mprotect函数时老是发生crash，分析了一下堆，发现spray 的堆的内容发生错位。ROP的起始位置不对。看了一下源码，ROP起始地址设的为0x34:</li>
+</ul>
+<pre><code><span class="constant">off</span> = 0x34 
+<span class="constant">page</span> = page[:off] + rop + page[off+len(rop):] 
+...
+<span class="comment"># Add some identifiable stuff, just in case something goes awry… </span>
+<span class="constant">rop_start_off</span> = 0x34 
+<span class="constant">x</span> = rop_start_off + len(rop)
+</code></pre><p>根据指令的调试，这个值应该是0x4c (同乌云的那篇文章)。 不知道jduc那边如何考虑，我们需要修改一下。</p>
+<ul>
+<li><p>tx3g box的位置问题<br>前面分析了exploit chain是通过析构触发的。MPEG4Extractor这个类的析构顺序如下：<br>~MPEG4Extractor-&gt;first Trak-&gt;first sp<sampletable\>-&gt;second Trak-&gt;second sp<sampletable\><br>通过调试发现溢出的堆有50%的概率分配在second Track之前，极少的概率分配在first Track或MPEG5Extractor之前，即我们只能覆盖second Track。但spray buffer是通过first Track的tx3g 生成的，在析构的时候，first Track先析构，这样会导致在析构sencond Track的时候spray buffer已经被free了。由于是2M的大堆，free之后进程已经无法访问。所以会发现decStrong中 的指令LDR   R4, [R0,#4]一经调用，必定会crash。 解决这个问题的办法就是把tx3g box放到第二个trak中，这样在sample table析构之前, spray buffer仍然是活的。下面两张图直观呈现了这个改动：<br><img src="/images/st/tx3g_original.png" alt="改动前" title="改动前"><br><img src="/images/st/tx3g_modified.png" alt="改动后" title="改动后"><br>至于原作者为何将tx3g至于第一个trak，目前我还没找到可以解释的合理理由。  </sampletable\></sampletable\></p>
+</li>
+<li><p>溢出字节的大小问题<br>在内存中几个关键的对象布局大概是这样，从低地址到高地址：<br>MPEG4Extractor对象-Trak1对象-Trak2对象-sample table2对象<br>而我们所关心的溢出堆大概有50%概率会落在Trak1对象与Trak2对象之间。这样就可以通过覆盖Trak2对象中的sample table2对象指针，达到在析构时控制r0的目的。要记住的是不能覆盖sample table2对象，因为在循环里面会用到，一旦覆盖，循环里面就crash了。因此设计一个合理的溢出值，就比较关键。在我的机子上经过若干次调试，我设的这个值为0xA50，大半个内存页的大小，可以使得成功率40-50%左右。  </p>
+</li>
+<li><p>几个地址问题<br>即使关闭ASLR，不同的版本几个地址也不一样。需要注意的是代码中用到的pop {pc}和pop {r0, r1, r2, r3, r4, pc}是16位的thumb指令，需要将ida中的地址+1。  另外heap spray的预测地址也要根据调试预先定义好。</p>
+</li>
+</ul>
+<h1 id="调试">调试</h1><p>在解决了以上四个关键的问题后，就可以开始调试了。<br>我的机器是华为 T9510E, android 4.0.4.<br>需要先关闭aslr：</p>
+<pre><code>echo <span class="number">0</span> &gt; /<span class="keyword">proc</span>/sys/kernel/randomize_va_space
+</code></pre><p>ida attach media server，无需gdb server,直接用自带的android_server, nonpie版本。<br>通过下断点，可以看到第一个分配的Trak1的地址为：0x231d0<br><img src="/images/st/Trak1.png" alt="Trak1对象地址" title="Trak1对象地址">   </p>
+<p>第一个分配的stsc1里面的SampleToChunkEntry对象地址为:0x23458<br><img src="/images/st/stsc1.png" alt="stsc1的SampleToChunkEntry对象地址" title="stsc1的SampleToChunkEntry对象地址">   </p>
+<p>Trak2的地址为：0x23e70<br><img src="/images/st/trak2.png" alt="Trak2对象地址" title="Trak2对象地址">   </p>
+<p>第二个分配的stsc2里面的SampleToChunkEntry对象地址为:0x236d0 (溢出堆),同时看到sample table对象地址为r4=0x24888<br><img src="/images/st/stsc2.png" alt="stsc2的SampleToChunkEntry对象地址" title="stsc2的SampleToChunkEntry对象地址">  </p>
+<p>到这里我们可以计算一下，溢出堆到Trak2的距离为 0x23e70 - 0x236d0 = 0x7a0 &lt; 0xa50, 到sample table 对象的距离为 0x24888 - 0x236d0 = 0x11b8 &gt; 0xa50。 即我们的溢出会完全覆盖Track2对象同时不会覆盖到sample table对象，说明这次触发有可能成功。 继续调试：  </p>
+<p>发现Trak2对象确实已经被完全覆盖，写入我们的预测地址:<br><img src="/images/st/trak2_overflow.png" alt="Trak2被覆盖" title="Trak2被覆盖">  </p>
+<p>循环结束，没有crash，进入MPEG4Extractor的析构，此时发现我们预测的堆已经被spray到，并且刚好是起始位置:<br><img src="/images/st/heap_sprayed.png" alt="heap spray成功" title="heap spray成功">     </p>
+<p>Trak1先析构:<br><img src="/images/st/trak1_decons.png" alt="Trak1先析构" title="Trak1先析构">  </p>
+<p>Trak2开始析构:<br><img src="/images/st/trak2_decons.png" alt="Trak2开始析构" title="Trak2开始析构">   </p>
+<p>sample table开始析构，a1 + 12为 sp<sampletable\>指针，已经被覆盖为sp_addr，所以调用decStrong后 r0即为sp_addr:<br><img src="/images/st/sampletabledecons.png" alt="sample table开始析构" title="sample table开始析构">   </sampletable\></p>
+<p>进入decStrong, r0指向spray buffer头：<br><img src="/images/st/decstrong.png" alt="decStrong" title="decStrong">   </p>
+<p>进入god gadget restore_core_regs, r0已经更新:<br><img src="/images/st/restorecorereg.png" alt="restore_core_regs" title="restore_core_regs">  </p>
+<p>进入mprotect,r0已经被更新为页首，其他参数已经设入：<br><img src="/images/st/mprotect.png" alt="mprotect" title="mprotect">   </p>
+<p>第一个pop, 16位的thumb指令:<br><img src="/images/st/pop1.png" alt="第一个pop" title="第一个pop">   </p>
+<p>第二个pop, 16位的thumb指令:<br><img src="/images/st/pop2.png" alt="第二个pop" title="第二个pop"></p>
+<p>shellcode, 即乌云文中所翻译的那段指令：<br><img src="/images/st/shellcode.png" alt="shellcode" title="shellcode"> </p>
+<p>最终:<br><img src="/images/st/shell.png" alt="reverse shell" title="reverse shell">  </p>
+<h1 id="总结">总结</h1><p>因为Media server crash后会不断重启，所以通过反复触发总能成功。我的机器概率大概是5-8次重启，能保证有一次成功。本文主要以动态调试方法详细阐述了该exploit的原理及相关问题，实践出真知，这些问题，或许因为某些原因在原作者的设备上并不存在（我对此表示怀疑），但通过这个调试过程，我们可以对漏洞利用的一般性方法有一个大概的了解。对文中指出的几个问题，有不同见解的朋友可以留言讨论。  </p>
+<h1 id="修改的代码链接">修改的代码链接</h1><p><a href="https://github.com/huntcve/exploit/blob/master/cve-2015-1538-update.py" target="_blank" rel="external">CVE-2015-1538-update.py</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>古语云：“蒙惠者虽知其然，而未必知其所以然也”。在漏洞利用的学习方面，我们不能只知其然，而必须知其所以然，才能真正掌握利用的精髓，以便学以致用。</p>
+<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中lib]]>
+    </summary>
+    
+      <category term="Stagefright, expoit" scheme="http://huntcve.github.io/tags/Stagefright-expoit/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hunted CVEs in 2015]]></title>
