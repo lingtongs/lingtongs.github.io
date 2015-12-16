@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-12-16T09:07:31.000Z</updated>
+  <updated>2015-12-16T09:18:53.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/"/>
     <id>http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/</id>
     <published>2015-12-16T04:58:48.000Z</published>
-    <updated>2015-12-16T09:07:31.000Z</updated>
+    <updated>2015-12-16T09:18:53.000Z</updated>
     <content type="html"><![CDATA[<p>古语云：“蒙惠者虽知其然，而未必知其所以然也”。在漏洞利用的学习方面，我们不能只知其然，而必须知其所以然，才能真正掌握利用的精髓，以便学以致用。</p>
 <h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefirght无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
 <p>目前关于libstagefright开源的exploit有两个版本，一个是jduck公布的<a href="https://blog.zimperium.com/the-latest-on-stagefright-cve-2015-1538-exploit-is-now-available-for-testing-purposes/" target="_blank" rel="external">exploit1</a>,另外一个是谷歌公布的<a href="https://code.google.com/p/google-security-research/issues/attachmentText?id=502&amp;aid=5020005000&amp;name=mp4_stagefright_release.py&amp;token=ABZ6GAdoREMO07ZRfflSFlJct3GtBbtypg%3A1450243091152" target="_blank" rel="external">exploit2</a>。这其中谷歌的版本做法比较精致，精确控制了内存布局，具体可以参见project zero的<a href="http://googleprojectzero.blogspot.tw/2015/09/stagefrightened.html" target="_blank" rel="external">博客</a>。Jduck的版本，网上没有过多的分析文章，乌云上有<a href="http://drops.wooyun.org/papers/10896" target="_blank" rel="external">一篇</a>只分析了一半，很关键的前期内存布局控制及触发点分析没有覆盖到，且作者似乎只是从静态角度分析了exploit chain的调用原理，这对于初学者想要彻底弄清楚整个利用的原理，还显不够。</p>
@@ -139,7 +139,7 @@ stbl1 = make_stsc(<span class="number">3</span>, (<span class="number">0</span>x
     
     </summary>
     
-      <category term="Stagefright, expoit" scheme="http://huntcve.github.io/tags/Stagefright-expoit/"/>
+      <category term="Stagefright, exploit" scheme="http://huntcve.github.io/tags/Stagefright-exploit/"/>
     
   </entry>
   
