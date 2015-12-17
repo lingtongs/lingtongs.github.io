@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2015-12-16T09:18:53.000Z</updated>
+  <updated>2015-12-17T01:42:50.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,9 +20,9 @@
     <link href="http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/"/>
     <id>http://huntcve.github.io/2015/12/16/debug-stagefright-exploit/</id>
     <published>2015-12-16T04:58:48.000Z</published>
-    <updated>2015-12-16T09:18:53.000Z</updated>
+    <updated>2015-12-17T01:42:50.000Z</updated>
     <content type="html"><![CDATA[<p>古语云：“蒙惠者虽知其然，而未必知其所以然也”。在漏洞利用的学习方面，我们不能只知其然，而必须知其所以然，才能真正掌握利用的精髓，以便学以致用。</p>
-<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefirght无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
+<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefright无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
 <p>目前关于libstagefright开源的exploit有两个版本，一个是jduck公布的<a href="https://blog.zimperium.com/the-latest-on-stagefright-cve-2015-1538-exploit-is-now-available-for-testing-purposes/" target="_blank" rel="external">exploit1</a>,另外一个是谷歌公布的<a href="https://code.google.com/p/google-security-research/issues/attachmentText?id=502&amp;aid=5020005000&amp;name=mp4_stagefright_release.py&amp;token=ABZ6GAdoREMO07ZRfflSFlJct3GtBbtypg%3A1450243091152" target="_blank" rel="external">exploit2</a>。这其中谷歌的版本做法比较精致，精确控制了内存布局，具体可以参见project zero的<a href="http://googleprojectzero.blogspot.tw/2015/09/stagefrightened.html" target="_blank" rel="external">博客</a>。Jduck的版本，网上没有过多的分析文章，乌云上有<a href="http://drops.wooyun.org/papers/10896" target="_blank" rel="external">一篇</a>只分析了一半，很关键的前期内存布局控制及触发点分析没有覆盖到，且作者似乎只是从静态角度分析了exploit chain的调用原理，这对于初学者想要彻底弄清楚整个利用的原理，还显不够。</p>
 <p>本文从纯动态调试角度彻底阐述清楚该exploit的原理以及其所包含的问题。  </p>
 <a id="more"></a>
@@ -102,7 +102,7 @@ stbl1 = make_stsc(<span class="number">3</span>, (<span class="number">0</span>x
 <span class="constant">x</span> = rop_start_off + len(rop)
 </code></pre><p>根据指令的调试，这个值应该是0x4c (同乌云的那篇文章)。 不知道jduc那边如何考虑，我们需要修改一下。</p>
 </li>
-<li><p>tx3g box的位置问题<br>前面分析了exploit chain是通过析构触发的。MPEG4Extractor这个类的析构顺序如下：<br>~MPEG4Extractor-&gt;first Trak-&gt;first sp(SampleTable)-&gt;second Trak-&gt;second sp(SampleTable)<br>通过调试发现溢出的堆有50%的概率分配在second Trak之前，极少的概率分配在first Trak或MPEG5Extractor之前，即我们只能覆盖second Trak。但spray buffer是通过first Trak的tx3g 生成的，在析构的时候，first Trak先析构，这样会导致在析构sencond Trak的时候spray buffer已经被free了。由于是2M的大堆，free之后进程已经无法访问。所以会发现decStrong中 的指令LDR   R4, [R0,#4]一经调用，必定会crash。 解决这个问题的办法就是把tx3g box放到第二个trak中，这样在sample table析构之前, spray buffer仍然是活的。下面两张图直观呈现了这个改动：<br><img src="/images/st/tx3g_original.png" alt="改动前" title="改动前"> <img src="/images/st/tx3g_modified.png" alt="改动后" title="改动后"><br>至于原作者为何将tx3g至于第一个trak，目前我还没找到可以解释的合理理由。  </p>
+<li><p>tx3g box的位置问题<br>前面分析了exploit chain是通过析构触发的。MPEG4Extractor这个类的析构顺序如下：<br>~MPEG4Extractor-&gt;first Trak-&gt;first sp(SampleTable)-&gt;second Trak-&gt;second sp(SampleTable)<br>通过调试发现溢出的堆有50%的概率分配在second Trak之前，极少的概率分配在first Trak或MPEG4Extractor之前，即我们只能覆盖second Trak。但spray buffer是通过first Trak的tx3g 生成的，在析构的时候，first Trak先析构，这样会导致在析构sencond Trak的时候spray buffer已经被free了。由于是2M的大堆，free之后进程已经无法访问。所以会发现decStrong中 的指令LDR   R4, [R0,#4]一经调用，必定会crash。 解决这个问题的办法就是把tx3g box放到第二个trak中，这样在sample table析构之前, spray buffer仍然是活的。下面两张图直观呈现了这个改动：<br><img src="/images/st/tx3g_original.png" alt="改动前" title="改动前"> <img src="/images/st/tx3g_modified.png" alt="改动后" title="改动后"><br>至于原作者为何将tx3g至于第一个trak，目前我还没找到可以解释的合理理由。  </p>
 </li>
 <li><p>溢出字节的大小问题<br>在内存中几个关键的对象布局大概是这样，从低地址到高地址：<br>MPEG4Extractor对象-Trak1对象-Trak2对象-sample table2对象<br>而我们所关心的溢出堆大概有50%概率会落在Trak1对象与Trak2对象之间。这样就可以通过覆盖Trak2对象中的sample table2对象指针，达到在析构时控制r0的目的。要记住的是不能覆盖sample table2对象，因为在循环里面会用到，一旦覆盖，循环里面就crash了。因此设计一个合理的溢出值，就比较关键。在我的机子上经过若干次调试，我设的这个值为0xA50，大半个内存页的大小，可以使得成功率40-50%左右。  </p>
 </li>
@@ -133,7 +133,7 @@ stbl1 = make_stsc(<span class="number">3</span>, (<span class="number">0</span>x
 ]]></content>
     <summary type="html">
     <![CDATA[<p>古语云：“蒙惠者虽知其然，而未必知其所以然也”。在漏洞利用的学习方面，我们不能只知其然，而必须知其所以然，才能真正掌握利用的精髓，以便学以致用。</p>
-<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefirght无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
+<h1 id="前言">前言</h1><p>安卓Media Server的漏洞近一年多以来一直是挖掘的重点。而其中libstagefright无疑是最热点。自从今年八月份jduck公开披露以来，这个模块一直是谷歌撒钱的大户。近期我又从里面挖掘到一个critical的漏洞，有望在明年一月份bulletin里公布。种种迹象表明，这个模块漏洞还没有挖掘干净，应该还要继续臭名昭著一段时间。</p>
 <p>目前关于libstagefright开源的exploit有两个版本，一个是jduck公布的<a href="https://blog.zimperium.com/the-latest-on-stagefright-cve-2015-1538-exploit-is-now-available-for-testing-purposes/">exploit1</a>,另外一个是谷歌公布的<a href="https://code.google.com/p/google-security-research/issues/attachmentText?id=502&amp;aid=5020005000&amp;name=mp4_stagefright_release.py&amp;token=ABZ6GAdoREMO07ZRfflSFlJct3GtBbtypg%3A1450243091152">exploit2</a>。这其中谷歌的版本做法比较精致，精确控制了内存布局，具体可以参见project zero的<a href="http://googleprojectzero.blogspot.tw/2015/09/stagefrightened.html">博客</a>。Jduck的版本，网上没有过多的分析文章，乌云上有<a href="http://drops.wooyun.org/papers/10896">一篇</a>只分析了一半，很关键的前期内存布局控制及触发点分析没有覆盖到，且作者似乎只是从静态角度分析了exploit chain的调用原理，这对于初学者想要彻底弄清楚整个利用的原理，还显不够。</p>
 <p>本文从纯动态调试角度彻底阐述清楚该exploit的原理以及其所包含的问题。  </p>]]>
     
