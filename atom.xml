@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2016-04-11T10:30:51.000Z</updated>
+  <updated>2016-04-11T10:34:29.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,11 +20,11 @@
     <link href="http://huntcve.github.io/2016/04/11/cve-2015-1805/"/>
     <id>http://huntcve.github.io/2016/04/11/cve-2015-1805/</id>
     <published>2016-04-11T10:11:22.000Z</published>
-    <updated>2016-04-11T10:30:51.000Z</updated>
+    <updated>2016-04-11T10:34:29.000Z</updated>
     <content type="html"><![CDATA[<p>CVE-2015-1805是一个通用型的linux内核任意地址写任意值的漏洞，这种漏洞值得纪念，这里用四张图直观描述一下：<br><a id="more"></a></p>
 <p><img src="/images/cve-2015-1805/1.png" alt="初始内存布局" title="初始内存布局"><br><img src="/images/cve-2015-1805/2.png" alt="第一次拷贝后" title="第一次拷贝后"><br><img src="/images/cve-2015-1805/3.png" alt="redo第二次拷贝后" title="redo第二次拷贝后"><br><img src="/images/cve-2015-1805/4.png" alt="第三次拷贝后" title="第三次拷贝后">  </p>
 <p>【注意点】：</p>
-<p>1 iov <em> fault </em> in <em> pages </em> write 不会对iov-&gt;iov <em> base是否是内核指针进行校验，对它的检验是在vfs </em> read中完成的，因此exploit必须在一个原子pipe_read中完成， 即连续三次拷贝。</p>
+<p>1 iov_fault_in_ pages_write 不会对iov-&gt;iov_base是否是内核指针进行校验，对它的检验是在vfs_read中完成的，因此exploit必须在一个原子pipe_read中完成， 即连续三次拷贝。</p>
 <p>2  补丁只是解决了函数内部各变量同步的问题，但引入函数多次调用之间pipe缓存偏移和长度不同步的问题（CVE-2016-0774）</p>
 ]]></content>
     <summary type="html">
