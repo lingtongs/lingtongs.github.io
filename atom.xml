@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2016-04-11T10:35:36.000Z</updated>
+  <updated>2016-04-19T08:54:19.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -14,6 +14,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[图解Android匿名共享内存与CVE-2016-0846]]></title>
+    <link href="http://huntcve.github.io/2016/04/19/cve-2016-0846/"/>
+    <id>http://huntcve.github.io/2016/04/19/cve-2016-0846/</id>
+    <published>2016-04-19T08:40:12.000Z</published>
+    <updated>2016-04-19T08:54:19.000Z</updated>
+    <content type="html"><![CDATA[<p>CVE-2016-0846据说是一个比Android出生还早的Android漏洞，理解它先要理解Android共享内存（Ashmem），这里画一张图，便于直观理解：<br><a id="more"></a><br><img src="/images/cve-2016-0846/ashmem.png" alt="Ashmem" title="匿名共享内存"> </p>
+<p>【注意点】：</p>
+<p>1 IMemory本质上只是个适配器，IMemoryHeap才是真正分配内存的地方。</p>
+<p>2 这个共享内存漏洞也是个通用漏洞，android framework里大量使用共享内存，因此不仅影响media server，最严重可获取system权限。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>CVE-2016-0846据说是一个比Android出生还早的Android漏洞，理解它先要理解Android共享内存（Ashmem），这里画一张图，便于直观理解：<br>]]>
+    
+    </summary>
+    
+      <category term="CVE" scheme="http://huntcve.github.io/tags/CVE/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[图解CVE-2015-1805]]></title>
