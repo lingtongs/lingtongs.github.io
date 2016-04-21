@@ -61,7 +61,7 @@
     <link href="http://huntcve.github.io/2016/02/15/cveupdate/"/>
     <id>http://huntcve.github.io/2016/02/15/cveupdate/</id>
     <published>2016-02-15T03:08:39.000Z</published>
-    <updated>2016-02-15T08:40:59.000Z</updated>
+    <updated>2016-04-21T01:49:40.000Z</updated>
     <content type="html"><![CDATA[<p>个人挖掘的漏洞汇总，分析与PoC仅供学习使用：<br><a id="more"></a></p>
 <table>
 <thead>
@@ -125,7 +125,7 @@
 <td style="text-align:center">Bypass,DoS</td>
 <td style="text-align:center">2015.7.13</td>
 <td style="text-align:center">Phone DoS/SIP profile removal</td>
-<td style="text-align:center">blog,poc</td>
+<td style="text-align:center"><a href="https://android.googlesource.com/platform/packages/services/Telephony/+/aaf4c41e2e353be01fe9cd5f8ca97bf37565dc41" target="_blank" rel="external">patch</a>,poc</td>
 </tr>
 <tr>
 <td style="text-align:center">Android</td>
@@ -135,7 +135,7 @@
 <td style="text-align:center">DoS</td>
 <td style="text-align:center">2015.7.15</td>
 <td style="text-align:center">Device continue reboot</td>
-<td style="text-align:center">blog,poc</td>
+<td style="text-align:center"><a href="https://android.googlesource.com/platform/packages/services/Telephony/+/dcec1e1471a1d32918b5a2beb239693708c548e7" target="_blank" rel="external">patch</a>,poc</td>
 </tr>
 <tr>
 <td style="text-align:center">Android</td>
