@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2016-10-04T15:24:38.000Z</updated>
+  <updated>2016-12-14T10:11:04.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -17,257 +17,12 @@
   
   <entry>
     <title><![CDATA[Hunted CVEs]]></title>
-    <link href="http://huntcve.github.io/2016/10/04/cveupdate/"/>
-    <id>http://huntcve.github.io/2016/10/04/cveupdate/</id>
-    <published>2016-10-04T03:08:39.000Z</published>
-    <updated>2016-10-04T15:24:38.000Z</updated>
+    <link href="http://huntcve.github.io/2016/12/14/cveupdate/"/>
+    <id>http://huntcve.github.io/2016/12/14/cveupdate/</id>
+    <published>2016-12-14T03:08:39.000Z</published>
+    <updated>2016-12-14T10:11:04.000Z</updated>
     <content type="html"><![CDATA[<p>个人挖掘的漏洞汇总，分析与PoC仅供学习使用：<br><a id="more"></a></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">Project</th>
-<th style="text-align:center">Module</th>
-<th style="text-align:center">CVE</th>
-<th style="text-align:center">Severity</th>
-<th style="text-align:center">Type</th>
-<th style="text-align:center">Date</th>
-<th style="text-align:center">Description</th>
-<th style="text-align:center">Links</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">Apache</td>
-<td style="text-align:center">Cordova</td>
-<td style="text-align:center">CVE-2015-1835</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">RCE</td>
-<td style="text-align:center">2015.4.30</td>
-<td style="text-align:center">Remote modify Cordova configurations</td>
-<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/trend-micro-discovers-apache-vulnerability-that-allows-one-click-modification-of-android-apps/" target="_blank" rel="external">blog</a>, <a href="https://github.com/huntcve/CVE/tree/master/CVE-2015-1835" target="_blank" rel="external">poc</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">MMS</td>
-<td style="text-align:center">CVE-2015-3839</td>
-<td style="text-align:center">Low</td>
-<td style="text-align:center">DoS</td>
-<td style="text-align:center">2015.6.4</td>
-<td style="text-align:center">Messaging app DoS</td>
-<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">blog</a>,poc</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">MMS</td>
-<td style="text-align:center">CVE-2015-3840</td>
-<td style="text-align:center">Low</td>
-<td style="text-align:center">Bypass</td>
-<td style="text-align:center">2015.6.4</td>
-<td style="text-align:center">MMS/SMS status modify</td>
-<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">blog</a>,poc</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">Bluethooth</td>
-<td style="text-align:center">CVE-2015-3847</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Bypass,DoS</td>
-<td style="text-align:center">2015.7.6</td>
-<td style="text-align:center">Arbitrary SMS removal</td>
-<td style="text-align:center">blog,poc</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">Phone</td>
-<td style="text-align:center">CVE-2015-3851</td>
-<td style="text-align:center">Low</td>
-<td style="text-align:center">Bypass,DoS</td>
-<td style="text-align:center">2015.7.13</td>
-<td style="text-align:center">Phone DoS/SIP profile removal</td>
-<td style="text-align:center"><a href="https://android.googlesource.com/platform/packages/services/Telephony/+/aaf4c41e2e353be01fe9cd5f8ca97bf37565dc41" target="_blank" rel="external">patch</a>,poc</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">GPS</td>
-<td style="text-align:center">CVE-2015-3852</td>
-<td style="text-align:center">Low</td>
-<td style="text-align:center">DoS</td>
-<td style="text-align:center">2015.7.15</td>
-<td style="text-align:center">Device continue reboot</td>
-<td style="text-align:center"><a href="https://android.googlesource.com/platform/packages/services/Telephony/+/dcec1e1471a1d32918b5a2beb239693708c548e7" target="_blank" rel="external">patch</a>,poc</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">StageFright</td>
-<td style="text-align:center">CVE-2015-6600</td>
-<td style="text-align:center">Critical</td>
-<td style="text-align:center">RCE</td>
-<td style="text-align:center">2015.7.31</td>
-<td style="text-align:center">Heap buffer overflow</td>
-<td style="text-align:center"><a href="http://blog.trendmicro.com/trendlabs-security-intelligence/android-security-update-includes-fix-for-stagefright-vulnerabilities-discovered-by-trend-micro/" target="_blank" rel="external">blog</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">StageFright</td>
-<td style="text-align:center">CVE-2015-6610</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2015.8.19</td>
-<td style="text-align:center">Heap buffer overflow</td>
-<td style="text-align:center">blog</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">StageFright</td>
-<td style="text-align:center">CVE-2016-0803</td>
-<td style="text-align:center">Critical</td>
-<td style="text-align:center">RCE</td>
-<td style="text-align:center">2015.11.19</td>
-<td style="text-align:center">Heap buffer overflow</td>
-<td style="text-align:center">blog</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-2064</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.04.01</td>
-<td style="text-align:center">buffer overflow</td>
-<td style="text-align:center">conflict with <a href="https://twitter.com/ScottyBauer1" target="_blank" rel="external">@ScottyBauer1</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-2065</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.04.01</td>
-<td style="text-align:center">buffer overflow</td>
-<td style="text-align:center">conflict with <a href="https://twitter.com/ScottyBauer1" target="_blank" rel="external">@ScottyBauer1</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-2066</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.04.01</td>
-<td style="text-align:center">buffer overflow</td>
-<td style="text-align:center">conflict with <a href="https://twitter.com/ScottyBauer1" target="_blank" rel="external">@ScottyBauer1</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-2068</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.04.28</td>
-<td style="text-align:center">Heap buffer overflow</td>
-<td style="text-align:center">blog</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">DMA</td>
-<td style="text-align:center">CVE-2016-3894</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.06.23</td>
-<td style="text-align:center">Uninitialized memory leak</td>
-<td style="text-align:center">blog</td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">QSEE</td>
-<td style="text-align:center">CVE-2016-3931</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.06</td>
-<td style="text-align:center">Buffer overflow</td>
-<td style="text-align:center"><a href="https://www.codeaurora.org/out-range-pointer-offset-qseecomsendmodfdresp-cve-2016-3931" target="_blank" rel="external">details</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-6693</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.06</td>
-<td style="text-align:center">Buffer over read</td>
-<td style="text-align:center"><a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">details</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-6694</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.06</td>
-<td style="text-align:center">Buffer over read</td>
-<td style="text-align:center"><a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">details</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">qdsp6v2</td>
-<td style="text-align:center">CVE-2016-6695</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.06</td>
-<td style="text-align:center">Heap overflow</td>
-<td style="text-align:center"><a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">details</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">Kernel</td>
-<td style="text-align:center">CVE-2016-6685</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.07</td>
-<td style="text-align:center">Kernel pointer leak</td>
-<td style="text-align:center"><a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">bulletin</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">Kernel</td>
-<td style="text-align:center">CVE-2016-6683</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.07</td>
-<td style="text-align:center">Kernel pointer leak</td>
-<td style="text-align:center"><a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">bulletin</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">WLAN</td>
-<td style="text-align:center">CVE-2016-6680</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.07</td>
-<td style="text-align:center">Buffer over read</td>
-<td style="text-align:center"><a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">bulletin</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">WLAN</td>
-<td style="text-align:center">CVE-2016-6679</td>
-<td style="text-align:center">Moderate</td>
-<td style="text-align:center">Info Leak</td>
-<td style="text-align:center">2016.07</td>
-<td style="text-align:center">Buffer over read</td>
-<td style="text-align:center"><a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">bulletin</a></td>
-</tr>
-<tr>
-<td style="text-align:center">Android</td>
-<td style="text-align:center">Camera</td>
-<td style="text-align:center">CVE-2016-3903</td>
-<td style="text-align:center">High</td>
-<td style="text-align:center">Privilege Elevation</td>
-<td style="text-align:center">2016.06</td>
-<td style="text-align:center">Kernel Use After Free</td>
-<td style="text-align:center"><a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">bulletin</a></td>
-</tr>
-</tbody>
-</table>
+<p>-CVE-2015-1835:<a href="http://blog.trendmicro.com/trendlabs-security-intelligence/trend-micro-discovers-apache-vulnerability-that-allows-one-click-modification-of-android-apps/" target="_blank" rel="external">Remote modify Cordova configurations</a>, <a href="https://github.com/huntcve/CVE/tree/master/CVE-2015-1835" target="_blank" rel="external">poc</a><br>-CVE-2015-3839:<a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">DoS Messaging app</a><br>-CVE-2015-3840:<a href="http://blog.trendmicro.com/trendlabs-security-intelligence/two-new-android-bugs-mess-up-messaging-may-lead-to-multiple-send-charges/" target="_blank" rel="external">MMS/SMS status modify</a><br>-CVE-2015-3847:Arbitrary SMS removal<br>-CVE-2015-3851:<a href="https://android.googlesource.com/platform/packages/services/Telephony/+/aaf4c41e2e353be01fe9cd5f8ca97bf37565dc41" target="_blank" rel="external">Phone DoS/SIP profile removal</a><br>-CVE-2015-3852:<a href="https://android.googlesource.com/platform/packages/services/Telephony/+/dcec1e1471a1d32918b5a2beb239693708c548e7" target="_blank" rel="external">Device continue reboot</a><br>-CVE-2015-6600:<a href="http://blog.trendmicro.com/trendlabs-security-intelligence/android-security-update-includes-fix-for-stagefright-vulnerabilities-discovered-by-trend-micro/" target="_blank" rel="external">Remote heap buffer overflow in media server</a><br>-CVE-2015-6610:Local heap buffer overflow in media server<br>-CVE-2016-0803:Remote heap buffer overflow in media server<br>-CVE-2016-2064:Qualcomm sound driver buffer overflow<br>-CVE-2016-2065:Qualcomm sound driver buffer overflow<br>-CVE-2016-2066:Qualcomm sound driver buffer overflow<br>-CVE-2016-2068:Qualcomm sound driver buffer overflow<br>-CVE-2016-3894:Qualcomm DMA driver info leak<br>-CVE-2016-3931:<a href="https://www.codeaurora.org/out-range-pointer-offset-qseecomsendmodfdresp-cve-2016-3931" target="_blank" rel="external">Qualcomm QSEE driver buffer overflow</a><br>-CVE-2016-6693:<a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">Qualcomm sound driver buffer overflow </a><br>-CVE-2016-6694:<a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">Qualcomm sound driver buffer overflow </a><br>-CVE-2016-6695:<a href="https://www.codeaurora.org/multiple-issues-qdsp6v2-driver-cve-2016-6693-cve-2016-6694-cve-2016-6695-cve-2016-6696" target="_blank" rel="external">Qualcomm sound driver buffer overflow </a><br>-CVE-2016-6685:<a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">kernel pointer leak</a><br>-CVE-2016-6683:<a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">Kernel pointer leak</a><br>-CVE-2016-6680:<a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">Qualcomm wlan driver info leak</a><br>-CVE-2016-6679:<a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">Qualcomm wlan driver info leak</a><br>-CVE-2016-3903:<a href="https://source.android.com/security/bulletin/2016-10-01.html" target="_blank" rel="external">Qualcomm camera driver use-after-free</a>|   </p>
 ]]></content>
     <summary type="html">
     <![CDATA[<p>个人挖掘的漏洞汇总，分析与PoC仅供学习使用：<br>]]>
@@ -275,6 +30,225 @@
     </summary>
     
       <category term="CVE" scheme="http://huntcve.github.io/tags/CVE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[DirtyCow 漏洞分析]]></title>
+    <link href="http://huntcve.github.io/2016/10/24/dirtycow-analyze/"/>
+    <id>http://huntcve.github.io/2016/10/24/dirtycow-analyze/</id>
+    <published>2016-10-24T04:49:36.000Z</published>
+    <updated>2016-10-24T06:29:16.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="1_触发内核调用">1 触发内核调用</h1><p>  PoC通过写”/proc/self/mem”触发内核处理Page Fault, 将最终调用__get_user_pages(…,gu_flags=FOL_FORCE,…)</p>
+<pre><code>int f=open<span class="list">(<span class="string">"/proc/self/mem"</span>,O_RDWR)</span><span class="comment">;</span>
+lseek<span class="list">(<span class="keyword">f</span>,<span class="list">(<span class="keyword">uintptr_t</span>)</span> map,SEEK_SET)</span><span class="comment">;</span>
+c+=write<span class="list">(<span class="keyword">f</span>,str,strlen<span class="list">(<span class="keyword">str</span>)</span>)</span><span class="comment">;</span>
+</code></pre><h1 id="2___get_user_pages(…)">2 __get_user_pages(…)</h1><p>   该函数是内核用来获取用户进程页面，分配物理内存，进行后续读、写等相关操作。</p>
+<pre><code><span class="keyword">long</span> __get_user_pages(<span class="keyword">struct</span> task_struct *tsk, <span class="keyword">struct</span> mm_struct *mm,
+    <span class="keyword">unsigned</span> <span class="keyword">long</span> start, <span class="keyword">unsigned</span> <span class="keyword">long</span> nr_pages,
+    <span class="keyword">unsigned</span> <span class="keyword">int</span> gup_flags, <span class="keyword">struct</span> page **pages,
+    <span class="keyword">struct</span> vm_area_struct **vmas, <span class="keyword">int</span> *nonblocking)
+{
+    ...
+
+    <span class="keyword">do</span> {
+        <span class="keyword">struct</span> page *page;
+        <span class="keyword">unsigned</span> <span class="keyword">int</span> foll_flags = gup_flags;
+        <span class="keyword">unsigned</span> <span class="keyword">int</span> page_increm;
+
+        <span class="comment">/* first iteration or cross vma bound */</span>
+        <span class="keyword">if</span> (!vma || start &gt;= vma-&gt;vm_end) {
+            vma = find_extend_vma(mm, start);
+            ...
+        }
+
+retry:
+        ...
+        cond_resched();
+        page = follow_page_mask(vma, start, foll_flags, &amp;page_mask);
+        <span class="keyword">if</span> (!page) {
+            <span class="keyword">int</span> ret;
+            ret = faultin_page(tsk, vma, start, &amp;foll_flags,
+                    nonblocking);
+            <span class="keyword">switch</span> (ret) {
+            <span class="keyword">case</span> <span class="number">0</span>:
+                <span class="keyword">goto</span> retry;
+            <span class="keyword">case</span> -EFAULT:
+            <span class="keyword">case</span> -ENOMEM:
+            <span class="keyword">case</span> -EHWPOISON:
+                <span class="keyword">return</span> i ? i : ret;
+            <span class="keyword">case</span> -EBUSY:
+                <span class="keyword">return</span> i;
+            <span class="keyword">case</span> -ENOENT:
+                <span class="keyword">goto</span> next_page;
+            }
+            BUG();
+        } <span class="keyword">else</span> <span class="keyword">if</span> (PTR_ERR(page) == -EEXIST) {
+            <span class="keyword">goto</span> next_page;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (IS_ERR(page)) {
+            <span class="keyword">return</span> i ? i : PTR_ERR(page);
+        }
+        <span class="keyword">if</span> (pages) {
+            pages[i] = page;
+            flush_anon_page(vma, page, start);
+            flush_dcache_page(page);
+            page_mask = <span class="number">0</span>;
+        }
+next_page:
+        ...
+        i += page_increm;
+        start += page_increm * PAGE_SIZE;
+        nr_pages -= page_increm;
+    } <span class="keyword">while</span> (nr_pages);
+    <span class="keyword">return</span> i;
+}
+</code></pre><p>函数是一个do循环，首先搜索VMA，然后进行各种读、写Page Fault的处理。注意这里有一个retry逻辑，这是整个漏洞得以形成的关键。 因为Page Fault处理中涉及物理页面的映射以及一些数据的拷贝，这是一个比较耗时的工作，所以程序调用了cond_resched()主动触发CPU调度，即在此可以允许其他任务优先执行。这里就导致了潜在的条件竞争。其后调用follow_page_mask，从用户地址空间里查找页面描述符，并返回一个struct page结构的页面指针。如果该页面指针为空，即未找到，调用faultin_page处理Page Fault, 该函数如果返回0再进入retry流程，其他则直接报错返回或进入下一页面。 </p>
+<h1 id="3_follow_page_mask调用了follow_page_pte">3 follow_page_mask调用了follow_page_pte</h1><pre><code><span class="keyword">struct</span> page *follow_page_mask(<span class="keyword">struct</span> vm_area_struct *vma,
+              <span class="keyword">unsigned</span> <span class="keyword">long</span> address, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags,
+              <span class="keyword">unsigned</span> <span class="keyword">int</span> *page_mask)
+{
+...
+    <span class="keyword">if</span> (likely(!<span class="keyword">pmd_t</span>rans_huge(*pmd)))
+        <span class="keyword">return</span> follow_page_pte(vma, address, pmd, flags);
+...
+}
+</code></pre><h1 id="4_follow_page_pte">4 follow_page_pte</h1><pre><code>static struct page <span class="built_in">*</span>follow_page_pte<span class="params">(struct vm_area_struct *vma,
+    unsigned long address, pmd_t *pmd, unsigned int flags)</span>
+{
+
+retry:
+    <span class="keyword">if</span> <span class="params">(unlikely<span class="params">(pmd_bad<span class="params">(*pmd)</span>)</span>)</span>
+        return no_page_table<span class="params">(vma, flags)</span>;
+
+...
+    <span class="keyword">if</span> <span class="params">(!pte_present<span class="params">(pte)</span>)</span> { ------------------------分支<span class="number">1</span>
+    ...
+        <span class="keyword">if</span> <span class="params">(pte_none<span class="params">(pte)</span>)</span>
+            goto no_page;
+    ..
+    }
+...
+    <span class="keyword">if</span> <span class="params">(<span class="params">(flags &amp; FOLL_WRITE)</span> &amp;&amp; !pte_write<span class="params">(pte)</span>)</span> {--------------分支<span class="number">2</span>
+        pte_unmap_unlock<span class="params">(ptep, ptl)</span>;
+        return NULL;
+    }
+...
+out:
+    pte_unmap_unlock<span class="params">(ptep, ptl)</span>;
+    return page;
+no_page:
+    pte_unmap_unlock<span class="params">(ptep, ptl)</span>;
+    <span class="keyword">if</span> <span class="params">(!pte_none<span class="params">(pte)</span>)</span>
+        return NULL;
+    return no_page_table<span class="params">(vma, flags)</span>;
+}
+</code></pre><p>这里有两种情况：一种是page不存在,条件竞争的时候被madvice释放了；另一种是madvice还没开始调用，这时候page是存在的，但页表PTE指向的是只读区，产生的是读异常，对于写就返回NULL。这两种情况函数都返回NULL，前者走分支1，后者走分支2。注意这里的flags变量是一开始传入的FOL_FORCE，代表强制读写， pte_write(pte)检测页表里的可写位。因为此块内存是只读映射所以pte_write返回false，因而分支2总是能满足。</p>
+<h1 id="5_进入faultin_page">5 进入faultin_page</h1><pre><code><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">faultin_page</span><span class="params">(<span class="keyword">struct</span> task_struct *tsk, <span class="keyword">struct</span> vm_area_struct *vma,
+    <span class="keyword">unsigned</span> <span class="keyword">long</span> address, <span class="keyword">unsigned</span> <span class="keyword">int</span> *flags, <span class="keyword">int</span> *nonblocking)</span>
+</span>{
+    ...
+    <span class="keyword">if</span> (*flags &amp; FOLL_WRITE)
+        fault_flags |= FAULT_FLAG_WRITE;
+    <span class="keyword">if</span> (*flags &amp; FOLL_REMOTE)
+        fault_flags |= FAULT_FLAG_REMOTE;
+    ...
+
+    ret = handle_mm_fault(mm, vma, address, fault_flags);
+    <span class="keyword">if</span> (ret &amp; VM_FAULT_ERROR) {
+        <span class="keyword">if</span> (ret &amp; VM_FAULT_OOM)
+            <span class="keyword">return</span> -ENOMEM;
+        <span class="keyword">if</span> (ret &amp; (VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE))
+            <span class="keyword">return</span> *flags &amp; FOLL_HWPOISON ? -EHWPOISON : -EFAULT;
+        <span class="keyword">if</span> (ret &amp; (VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV))
+            <span class="keyword">return</span> -EFAULT;
+        BUG();
+    }
+
+    ...
+
+    <span class="comment">/*
+     * The VM_FAULT_WRITE bit tells us that do_wp_page has broken COW when
+     * necessary, even if maybe_mkwrite decided not to set pte_write. We
+     * can thus safely do subsequent page lookups as if they were reads.
+     * But only do so when looping for pte_write is futile: in some cases
+     * userspace may also be wanting to write to the gotten user page,
+     * which a read fault here might prevent (a readonly page might get
+     * reCOWed by userspace write).
+     */</span>
+    <span class="keyword">if</span> ((ret &amp; VM_FAULT_WRITE) &amp;&amp; !(vma-&gt;vm_flags &amp; VM_WRITE))
+        *flags &amp;= ~FOLL_WRITE;
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><p>这个函数主要进行缺页异常处理。一开始会将异常标志fault_flags设FAULT_FLAG_WRITE，表示这是写异常。 其次调用handle_mm_fault进行异常处理，并根据其返回值判断是否需要移除写标志。函数正常情况下返回0.注意这里面会检测VM_FAULT_WRITE和VM_WRITE位，并据此判断是否要移除写标志，即进入读异常相应状态。 这是本漏洞的重点。 因为这里有一个写读反转的过程。</p>
+<h1 id="6_handle_mm_fault">6 handle_mm_fault</h1><p>直接调用__handle_mm_fault</p>
+<pre><code><span class="function"><span class="keyword">int</span> <span class="title">handle_mm_fault</span><span class="params">(<span class="keyword">struct</span> mm_struct *mm, <span class="keyword">struct</span> vm_area_struct *vma,
+        <span class="keyword">unsigned</span> <span class="keyword">long</span> address, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags)</span>
+</span>{
+    ...
+
+    ret = __handle_mm_fault(mm, vma, address, flags);
+
+    ...
+    <span class="keyword">return</span> ret;
+}
+</code></pre><h1 id="7___handle_mm_fault">7 __handle_mm_fault</h1><p>直接调用handle_pte_fault</p>
+<pre><code><span class="keyword">static</span> <span class="keyword">int</span> __handle_mm_fault(<span class="keyword">struct</span> mm_struct *mm, <span class="keyword">struct</span> vm_area_struct     *vma, 
+         <span class="keyword">unsigned</span> <span class="keyword">long</span> address, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags)
+{
+    ...
+    pte = pte_offset_map(pmd, address);
+
+    <span class="keyword">return</span> handle_pte_fault(mm, vma, address, pte, pmd, flags);
+}
+</code></pre><h1 id="8_handle_pte_fault">8 handle_pte_fault</h1><pre><code>static int handle_pte_fault<span class="params">(struct mm_struct *mm,
+         struct vm_area_struct *vma, unsigned long address,
+         pte_t *pte, pmd_t *pmd, unsigned int flags)</span>
+{
+    ...
+    <span class="keyword">if</span> <span class="params">(!pte_present<span class="params">(entry)</span>)</span> {
+        <span class="keyword">if</span> <span class="params">(pte_none<span class="params">(entry)</span>)</span> {
+            <span class="keyword">if</span> <span class="params">(vma_is_anonymous<span class="params">(vma)</span>)</span>
+                return do_anonymous_page<span class="params">(mm, vma, address,
+                             pte, pmd, flags)</span>;
+            <span class="keyword">else</span>
+                return do_fault<span class="params">(mm, vma, address, pte, pmd,
+                        flags, entry)</span>;
+        }
+        return do_swap_page<span class="params">(mm, vma, address,
+                    pte, pmd, flags, entry)</span>;
+    }
+
+    ...
+    <span class="keyword">if</span> <span class="params">(flags &amp; FAULT_FLAG_WRITE)</span> {
+        <span class="keyword">if</span> <span class="params">(!pte_write<span class="params">(entry)</span>)</span>
+            return do_wp_page<span class="params">(mm, vma, address,
+                    pte, pmd, ptl, entry)</span>;
+        entry = pte_mkdirty<span class="params">(entry)</span>;
+    }
+    entry = pte_mkyoung<span class="params">(entry)</span>;
+    <span class="keyword">if</span> <span class="params">(ptep_set_access_flags<span class="params">(vma, address, pte, entry, flags &amp; FAULT_FLAG_WRITE)</span>)</span> {
+        update_mmu_cache<span class="params">(vma, address, pte)</span>;
+    } <span class="keyword">else</span> {
+        <span class="comment">/*
+         * This is needed only for protection faults but the arch code
+         * is not yet telling us if this is a protection fault or not.
+         * This still avoids useless tlb flushes for .text page faults
+         * with threads.
+         */</span>
+        <span class="keyword">if</span> <span class="params">(flags &amp; FAULT_FLAG_WRITE)</span>
+            flush_tlb_fix_spurious_fault<span class="params">(vma, address)</span>;
+    }
+unlock:
+    pte_unmap_unlock<span class="params">(pte, ptl)</span>;
+    return <span class="number">0</span>;
+}
+</code></pre>]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="1_触发内核调用">1 触发内核调用</h1><p>  PoC通过写”/proc/self/mem”触发内核处理Page Fault, 将最终调用__get_user_pages(…,gu_flags=FOL_FORCE,…)</p>
+<pre><code>int]]>
+    </summary>
+    
+      <category term="vulnerability, CVE-2016-5195" scheme="http://huntcve.github.io/tags/vulnerability-CVE-2016-5195/"/>
     
   </entry>
   
