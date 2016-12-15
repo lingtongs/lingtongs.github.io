@@ -230,7 +230,8 @@
 <pre><code>int f=open<span class="list">(<span class="string">"/proc/self/mem"</span>,O_RDWR)</span><span class="comment">;</span>
 lseek<span class="list">(<span class="keyword">f</span>,<span class="list">(<span class="keyword">uintptr_t</span>)</span> map,SEEK_SET)</span><span class="comment">;</span>
 c+=write<span class="list">(<span class="keyword">f</span>,str,strlen<span class="list">(<span class="keyword">str</span>)</span>)</span><span class="comment">;</span>
-</code></pre><h1 id="2___get_user_pages(…)">2 __get_user_pages(…)</h1><p>   该函数是内核用来获取用户进程页面，分配物理内存，进行后续读、写等相关操作。</p>
+</code></pre><a id="more"></a>   
+<h1 id="2___get_user_pages(…)">2 __get_user_pages(…)</h1><p>   该函数是内核用来获取用户进程页面，分配物理内存，进行后续读、写等相关操作。</p>
 <pre><code><span class="keyword">long</span> __get_user_pages(<span class="keyword">struct</span> task_struct *tsk, <span class="keyword">struct</span> mm_struct *mm,
     <span class="keyword">unsigned</span> <span class="keyword">long</span> start, <span class="keyword">unsigned</span> <span class="keyword">long</span> nr_pages,
     <span class="keyword">unsigned</span> <span class="keyword">int</span> gup_flags, <span class="keyword">struct</span> page **pages,
@@ -429,7 +430,8 @@ unlock:
     pte_unmap_unlock<span class="params">(pte, ptl)</span>;
     return <span class="number">0</span>;
 }
-</code></pre>
+</code></pre><p>未完待续…</p>
+
       
     </div>
 
