@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2017-06-06T00:30:54.000Z</updated>
+  <updated>2017-07-04T10:36:19.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -14,6 +14,83 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[DirtyCow 漏洞分析2]]></title>
+    <link href="http://huntcve.github.io/2017/07/04/dirtycow/"/>
+    <id>http://huntcve.github.io/2017/07/04/dirtycow/</id>
+    <published>2017-07-04T10:25:27.000Z</published>
+    <updated>2017-07-04T10:36:19.000Z</updated>
+    <content type="html"><![CDATA[<p>上一篇关于DirtyCow的分析过于细节，写的越多反而越不知所云。本篇从流程角度做个简易分析，力求通俗易懂：  </p>
+<a id="more"></a>
+<p>先了解两个内核函数及其只要功能：  </p>
+<p>follow_page_mask: 寻页<br>faultin_page：缺页异常，或请求调页，或写实复制（COW）  </p>
+<p>当一个进程P企图对一个只读文件F进行写操作的时候，最终是不能改写文件内容的。但是它是可以用某种方法改变该文件在进程虚拟内存空间的内容，比如：  </p>
+<p>1 进程P以只读+MAP_PRIVATE的方式将该文件映射到自己的虚拟内存空间；<br>2 进程P通过强制写/proc/self/mem，来改变映射到本进程空间内的文件内容；<br>3 强行写入的内容被写到内核COW出来的拷贝页中，供进程使用；<br>4 进程退出时拷贝页回收，原文件F内容不受影响。  </p>
+<p>这个具体的过程在内核的实现如下：<br>1 进程调用MMAP映射一个只读文件进入内存后，得到一个线性的虚拟内存地址；<br>2 进程写这个虚拟地址，在内核态首先触发第一次寻页，继而发生第一次缺页异常；<br>3 第一次缺页异常中，页表为空，内核根据进程的写请求标志及所映射内存页面的只读属性判断，进行COW，生成一个新的可写COW页面，并标记为脏页面，同时保留其只读属性；<br>4 第一次缺页异常结束后，返回并进入第二次寻页重试；<br>5 内核在第二次寻页的时候判断，进程仍然是写请求标志，且页面属性不可写，于是返回NULL，触发第二次缺页异常：</p>
+<pre><code>  <span class="keyword">if</span> <span class="params">(<span class="params">(flags &amp; FOLL_WRITE)</span> &amp;&amp; !pte_write<span class="params">(pte)</span>)</span> {
+    pte_unmap_unlock<span class="params">(ptep, ptl)</span>;
+    return NULL;
+}
+</code></pre><p>6 第二次缺页异常中，判断已经是COW页且根据其结束标志（VM_FAULT_WRITE）将进程的写请求标志移除（便于后续直接绕过权限检查而获取COW页进行写）：  </p>
+<pre><code>   <span class="keyword">if</span> <span class="params">(<span class="params">(ret &amp; VM_FAULT_WRITE)</span> &amp;&amp; !<span class="params">(vma-&gt;vm_flags &amp; VM_WRITE)</span>)</span>
+    <span class="built_in">*</span>flags &amp;= ~FOLL_WRITE;
+     return <span class="number">0</span>;
+}
+</code></pre><p>7 第二次缺页异常结束后，返回并进入第三次寻页重试；<br>8 第三次寻页重试的时候，因为进程的写请求标志被移除，因此步骤5中的条件判断将得不到满足，不会返回NULL，而是进入vm_normal_page获取到COW页面；<br>9 进程可对COW页面进行任意读写，不会影响原文件内容。  </p>
+<p>DirtyCow漏洞发生在步骤7-8之间，当内核进行第三次寻页重试之前，控制CPU调度执行madvise回收所映射内存，于是:<br>8 第三次寻页重试，首先判断到页表为空不存在，再次进入第三次缺页异常；<br>9 第三次缺页异常中，再次进入do_fault，因为之前已经移除了进程的写请求标志，于是这次直接进入了do_read_fault，不会进行COW；<br>10 进程进入第四次寻页重试，成功获取到原文件所映射内存并任意读写，并能同步至物理文件中。  </p>
+<p>所以问题的关键在于两点：<br>1 因为竞争回收的影响，导致第8步中内核走不到vm_normal_page获取COW页面，而是提前返回进入缺页异常；<br>2 缺页异常中因为进程的写请求标志被移除，于是被错误的转换到了读请求中，直接获取到原文件的映射内存</p>
+<p>补丁中增加了FOLL_COW标志用以标识所映射页面是否已进行过COW，即第6步中不是用移除写请求标志来标识COW，而是或上新的标识位，这样进程的写请求标志<br>属性依然存在，避免了后面错误地转换成读请求处理。并且增加pte_dirty来结合判断该标志是否过期。<br>另外，在判断进程请求标识与页面属性是否匹配时（决定是否进入新的缺页异常），会综合考虑FOLL_FORCE标志位与COW是否匹配，即只有COW后的页面才能强行读写。   </p>
+<pre><code> +<span class="preprocessor">#<span class="keyword">define</span> FOLL_COW    0x4000    /* internal GUP flag */ </span>
+ <span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*pte_fn_t)</span><span class="params">(pte_t *pte, pgtable_t token, <span class="keyword">unsigned</span> <span class="keyword">long</span> addr,
+         <span class="keyword">void</span> *data)</span></span>;
+ diff --git a/mm/gup.c b/mm/gup.c
+ index <span class="number">377</span>a5a7..<span class="number">3</span>cec4df <span class="number">100644</span>
+ -- a/mm/gup.c
+ ++ b/mm/gup.c
+ @@ -<span class="number">32</span>,<span class="number">6</span> +<span class="number">32</span>,<span class="number">16</span> @@ <span class="keyword">static</span> <span class="keyword">struct</span> page *<span class="keyword">no_page_t</span>able(<span class="keyword">struct</span> vm_area_struct *vma,
+   <span class="keyword">return</span> NULL;
+ }
+
++<span class="comment">/*
++ * FOLL_FORCE can write to even unwritable pte's, but only
++ * after we've gone through a COW cycle and they are dirty.
++ */</span>
++<span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">bool</span> <span class="title">can_follow_write_pte</span><span class="params">(pte_t pte, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags)</span>
++</span>{
++    <span class="keyword">return</span> pte_write(pte) ||
++        ((flags &amp; FOLL_FORCE) &amp;&amp; (flags &amp; FOLL_COW) &amp;&amp; pte_dirty(pte));
++}
++
+ <span class="keyword">static</span> <span class="keyword">struct</span> page *follow_page_pte(<span class="keyword">struct</span> vm_area_struct *vma,
+         <span class="keyword">unsigned</span> <span class="keyword">long</span> address, <span class="keyword">pmd_t</span> *pmd, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags)
+ {
+@@ -<span class="number">66</span>,<span class="number">7</span> +<span class="number">76</span>,<span class="number">7</span> @@ retry:
+     }
+     <span class="keyword">if</span> ((flags &amp; FOLL_NUMA) &amp;&amp; pte_numa(pte))
+         <span class="keyword">goto</span> no_page;
+-    <span class="keyword">if</span> ((flags &amp; FOLL_WRITE) &amp;&amp; !pte_write(pte)) {
++    <span class="keyword">if</span> ((flags &amp; FOLL_WRITE) &amp;&amp; !can_follow_write_pte(pte, flags)) {
+         pte_unmap_unlock(ptep, ptl);
+         <span class="keyword">return</span> NULL;
+     }
+@@ -<span class="number">315</span>,<span class="number">7</span> +<span class="number">325</span>,<span class="number">7</span> @@ <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">faultin_page</span><span class="params">(<span class="keyword">struct</span> task_struct *tsk, <span class="keyword">struct</span> vm_area_struct *vma,
+      * reCOWed by userspace write)</span>.
+      */
+     <span class="title">if</span> <span class="params">((ret &amp; VM_FAULT_WRITE)</span> &amp;&amp; !<span class="params">(vma-&gt;vm_flags &amp; VM_WRITE)</span>)
+-        *flags &amp;</span>= ~FOLL_WRITE;
++            *flags |= FOLL_COW;
+     <span class="keyword">return</span> <span class="number">0</span>;
+ }。
+</code></pre>]]></content>
+    <summary type="html">
+    <![CDATA[<p>上一篇关于DirtyCow的分析过于细节，写的越多反而越不知所云。本篇从流程角度做个简易分析，力求通俗易懂：  </p>]]>
+    
+    </summary>
+    
+      <category term="vulnerability, CVE-2016-5195" scheme="http://huntcve.github.io/tags/vulnerability-CVE-2016-5195/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hunted CVEs]]></title>
