@@ -5,7 +5,7 @@
   <subtitle><![CDATA[Uncover hot project's vulnerabilities]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://huntcve.github.io//"/>
-  <updated>2017-07-04T10:36:19.000Z</updated>
+  <updated>2017-07-06T09:49:32.000Z</updated>
   <id>http://huntcve.github.io//</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://huntcve.github.io/2017/07/04/dirtycow/"/>
     <id>http://huntcve.github.io/2017/07/04/dirtycow/</id>
     <published>2017-07-04T10:25:27.000Z</published>
-    <updated>2017-07-04T10:36:19.000Z</updated>
+    <updated>2017-07-06T09:49:32.000Z</updated>
     <content type="html"><![CDATA[<p>上一篇关于DirtyCow的分析过于细节，写的越多反而越不知所云。本篇从流程角度做个简易分析，力求通俗易懂：  </p>
 <a id="more"></a>
 <p>先了解两个内核函数及其只要功能：  </p>
@@ -82,6 +82,19 @@
 +            *flags |= FOLL_COW;
      <span class="keyword">return</span> <span class="number">0</span>;
  }。
+</code></pre><p>弄清楚原理后想做动态检测其实就很容易了。简单一点的做法是在第8步发现页表被回收时检查COW标志即可：  </p>
+<pre><code><span class="keyword">if</span> (!pte_present(pte)) {
+    swp_entry_t entry;
+    /*
+     * KSM<span class="comment">'s break_ksm() relies upon recognizing a ksm page</span>
+     * even <span class="keyword">while</span> it <span class="keyword">is</span> being migrated, so <span class="keyword">for</span> that <span class="keyword">case</span> we
+     * need migration_entry_wait().
+     */
+  +  <span class="keyword">if</span>(flags &amp; FOLL_COW)
+  +     printk(<span class="string">"DirtyCow detected!\"</span>)
+
+    <span class="keyword">if</span> (likely(!(flags &amp; FOLL_MIGRATION)))
+        <span class="keyword">goto</span> no_page;
 </code></pre>]]></content>
     <summary type="html">
     <![CDATA[<p>上一篇关于DirtyCow的分析过于细节，写的越多反而越不知所云。本篇从流程角度做个简易分析，力求通俗易懂：  </p>]]>

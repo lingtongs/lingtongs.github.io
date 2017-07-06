@@ -287,6 +287,19 @@
 +            *flags |= FOLL_COW;
      <span class="keyword">return</span> <span class="number">0</span>;
  }。
+</code></pre><p>弄清楚原理后想做动态检测其实就很容易了。简单一点的做法是在第8步发现页表被回收时检查COW标志即可：  </p>
+<pre><code><span class="keyword">if</span> (!pte_present(pte)) {
+    swp_entry_t entry;
+    /*
+     * KSM<span class="comment">'s break_ksm() relies upon recognizing a ksm page</span>
+     * even <span class="keyword">while</span> it <span class="keyword">is</span> being migrated, so <span class="keyword">for</span> that <span class="keyword">case</span> we
+     * need migration_entry_wait().
+     */
+  +  <span class="keyword">if</span>(flags &amp; FOLL_COW)
+  +     printk(<span class="string">"DirtyCow detected!\"</span>)
+
+    <span class="keyword">if</span> (likely(!(flags &amp; FOLL_MIGRATION)))
+        <span class="keyword">goto</span> no_page;
 </code></pre>
       
     </div>
