@@ -39,10 +39,10 @@
     <link href="http://huntcve.github.io/2017/07/04/dirtycow/"/>
     <id>http://huntcve.github.io/2017/07/04/dirtycow/</id>
     <published>2017-07-04T10:25:27.000Z</published>
-    <updated>2017-07-06T09:51:21.000Z</updated>
+    <updated>2017-07-06T09:56:03.000Z</updated>
     <content type="html"><![CDATA[<p>上一篇关于DirtyCow的分析过于细节，写的越多反而越不知所云。本篇从流程角度做个简易分析，力求通俗易懂：  </p>
 <a id="more"></a>
-<p>先了解两个内核函数及其只要功能：  </p>
+<p>先了解两个内核函数及其主要功能：  </p>
 <p>follow_page_mask: 寻页<br>faultin_page：缺页异常，或请求调页，或写实复制（COW）  </p>
 <p>当一个进程P企图对一个只读文件F进行写操作的时候，最终是不能改写文件内容的。但是它是可以用某种方法改变该文件在进程虚拟内存空间的内容，比如：  </p>
 <p>1 进程P以只读+MAP_PRIVATE的方式将该文件映射到自己的虚拟内存空间；<br>2 进程P通过强制写/proc/self/mem，来改变映射到本进程空间内的文件内容；<br>3 强行写入的内容被写到内核COW出来的拷贝页中，供进程使用；<br>4 进程退出时拷贝页回收，原文件F内容不受影响。  </p>
