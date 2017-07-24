@@ -226,9 +226,9 @@
       
 
       
-        <p>程序的控制流，代表了程序的运行过程，也展现了程序员的编程思想，可以说是程序的基因。<br>对程序控制流进行相似度比较，可以有效地提取程序的本质特征，便于进行分类和聚类，因而广泛应用于各种大数据与人工智能处理领域之中。程序控制流是一种复杂的图结构，基于图结构的相似性比较有很多案例，但大多以高度降维牺牲精确度为代价，不适合用于对精确性要求极高的程序流程进行匹配。<br>本文综合了各种传统的图结构比较算法，分析了其优点与不足，提出了一种时空复杂度可控的精确比较算法(AMP算法)，并将之应用于Android病毒检测领域，取得了一定的效果。</p>
+        <p>程序的控制流，代表了程序的运行过程，也展现了程序员的编程思想，可以说是程序的基因。<br>对程序控制流进行相似度比较，可以有效地提取程序的本质特征，便于进行分类和聚类，因而广泛应用于各种大数据与人工智能处理领域之中。程序控制流是一种复杂的图结构，基于图结构的相似性比较有很多案例，但大多以高度降维牺牲精确度为代价，不适合用于对精确性要求极高的程序流程进行匹配。<br>本文综合了各种传统的图结构比较算法，分析了其优点与不足，提出了一种时空复杂度可控的精确比较算法(AMP算法)，并将之应用于Android病毒检测领域，取得了一定的效果。<br><a id="more"></a></p>
 <h1 id="图结构相似度比较算法综述">图结构相似度比较算法综述</h1><p>图，是一种最复杂的基本数据结构。对于图结构的比较，学术界一直在做研究。但迄今为止，受限于复杂度与计算资源，在通用算法层面并未有很大的突破。相反，有一些问题已经被证明无法突破，如：<br>图同构问题，即判断两图是否同构已经被认为是<a href="http://en.wikipedia.org/wiki/Graph_isomorphism" target="_blank" rel="external">NP</a>问题， 而子图同构问题即判断一图是否与另一图的子图同构已经<br>被证明是<a href="http://en.wikipedia.org/wiki/Subgraph_isomorphism_problem" target="_blank" rel="external">NP-Compete</a>问题。这给通过暴力搜索来精确匹配子图几乎判了死刑。<br>在<a href="http://www.cs.upc.edu/~valiente/algorithm/" target="_blank" rel="external">Algorithms on Trees and Graphs</a>一书中，有详细讲解了图的相关算法和应用，如遍历问题，最大集问题，同构自构问题，子图问题等。作者均有详细的算法描述与代码实现，有兴趣者自行翻阅。<br>除此之外，学术界还有一些其他研究，侧重于解决效率问题。<br>总结一下，如果要想比较两图的相似度，大体上有如下3类主要方法：</p>
-<h2 id="精确比较">精确比较</h2><p>思想基于： 两图相似，仅当他们完全一致（图同构），或其一被另外包含（子图同构。<br>这类属于暴力比较算法，主要涉及图同构，子图同构，最大共同子图等。有各种优化，如：<br>1.1 通过限制图的种类<br>X. Y. Jiang, H. BunkeIncluding： geometry in graph representations: A quadratic-time graph isomorphism algorithm and its applications<br>J. Hopcroft, J. Wong, Linear time algorithm for isomorphism of planar graphs<br>E. M. Luks, Isomorphism of Graphs of bounded valence can be tested in polynomial time<br>这类算法只是针对特定的图特定的应用场景优化，达到多项式时间解，但并未从根本解决图比较的复杂度问题<br>1.2 通过精减搜索空间<br>典型的以回溯法为代表：<br>Ullmann：<br>J.R. Ullmann, An Algorithm for Subgraph Isomorphism<br>SD:<br>D.C. Schmidt, L.E. Druffel, A Fast Backtracking Algorithm to Test Directed Graphs for Isomorphism Using Distance Matrices<br>VF2：<br>L. P. Cordella, P. Foggia, C. Sansone, and M. Vento, An improved algorithm for matching large graphs.<br>L. P. Cordella, P. Foggia, C. Sansone, and M. Vento, A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs<br>Nauty:<br>B.D. McKay, Practical Graph Isomorphism<br>这类算法各有应用场合:<br>对于无规则的图， 如果足够稠密并且规模比较大，Nauty比较适合；如果很稀疏并且规模较小，VF2性能更好。  对于有一定规则的图，VF2性能较好，<br>但这些并未解决时间复杂度问题，最差情况下仍为指数或阶乘级。<br>python的graph-tool（<a href="http://graph-tool.skewed.de/）用的是VF2，空间复杂度为O(V)，时间复杂度最好为O(V2)，" target="_blank" rel="external">http://graph-tool.skewed.de/）用的是VF2，空间复杂度为O(V)，时间复杂度最好为O(V2)，</a> 最差为O(V!×V)。<br>1.3 面向集合比较<br>这类算法绕开一对一比较，考虑面向集合的比较，降低整体计算代价。算法时间复杂度是输入样本图大小的二次方并且与集合大小无关。<br>如：<br>H. Bunke, B.T. Messmer, Efficient Attributed Graph Matching and its Application toImage Analysis<br>但算法的空间复杂度却是集合大小的指数级，因此只能适用于小规模的计算。  </p>
+<h2 id="精确比较">精确比较</h2><p>思想基于： 两图相似，仅当他们完全一致（图同构），或其一被另外包含（子图同构。<br>这类属于暴力比较算法，主要涉及图同构，子图同构，最大共同子图等。有各种优化，如：<br>1.1 通过限制图的种类<br>X. Y. Jiang, H. BunkeIncluding： geometry in graph representations: A quadratic-time graph isomorphism algorithm and its applications<br>J. Hopcroft, J. Wong, Linear time algorithm for isomorphism of planar graphs<br>E. M. Luks, Isomorphism of Graphs of bounded valence can be tested in polynomial time<br>这类算法只是针对特定的图特定的应用场景优化，达到多项式时间解，但并未从根本解决图比较的复杂度问题<br>1.2 通过精减搜索空间<br>典型的以回溯法为代表：<br>Ullmann：<br>J.R. Ullmann, An Algorithm for Subgraph Isomorphism<br>SD:<br>D.C. Schmidt, L.E. Druffel, A Fast Backtracking Algorithm to Test Directed Graphs for Isomorphism Using Distance Matrices<br>VF2：<br>L. P. Cordella, P. Foggia, C. Sansone, and M. Vento, An improved algorithm for matching large graphs.<br>L. P. Cordella, P. Foggia, C. Sansone, and M. Vento, A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs<br>Nauty:<br>B.D. McKay, Practical Graph Isomorphism<br>这类算法各有应用场合:<br>对于无规则的图， 如果足够稠密并且规模比较大，Nauty比较适合；如果很稀疏并且规模较小，VF2性能更好。  对于有一定规则的图，VF2性能较好，<br>但这些并未解决时间复杂度问题，最差情况下仍为指数或阶乘级。<br>python的<a href="http://graph-tool.skewed.de/" target="_blank" rel="external">graph-tool</a>用的是VF2，空间复杂度为O(V)，时间复杂度最好为O(V2)， 最差为O(V!×V)。<br>1.3 面向集合比较<br>这类算法绕开一对一比较，考虑面向集合的比较，降低整体计算代价。算法时间复杂度是输入样本图大小的二次方并且与集合大小无关。<br>如：<br>H. Bunke, B.T. Messmer, Efficient Attributed Graph Matching and its Application toImage Analysis<br>但算法的空间复杂度却是集合大小的指数级，因此只能适用于小规模的计算。  </p>
 <h2 id="特征抽取">特征抽取</h2><p>思想基于：两图相似，很大程度上一些属性也相似， 如度的发布，直径，特征值等。<br>算法通过抽取图的特征属性进行相似度计算，简化了问题的复杂度。<br>Sung-Hyuk Cha. Comprehensive survey on distance / similarity measures between probability density functions<br>显而易见，这是个取巧的方法，精确性有很大问题。  </p>
 <h2 id="顶点迭代">顶点迭代</h2><p>思想基于：若各自邻节点相似，则两顶点相似；若所有顶点相似，则两图相似。<br>算法主要基于不动点计算，通过每一次迭代计算，在顶点之间交换或传播相似度分值，直到算法收敛。<br>想法有点借鉴与Pagerank  </p>
 <p>典型的如：<br>V. Blondel, A. Gajardo, M. Heymans, P. Senellart, and P. V. Dooren. A measure of similarity between graph vertices: Applications to synonym extraction and web searching  </p>
@@ -240,122 +240,122 @@
 <h1 id="Android程序控制流的特性">Android程序控制流的特性</h1><p>Android程序采用系统回调式设计，相比较传统的以Main为唯一入口点的程序有很大的不同。一个Android程序有很多入口点，如onCreate，onStart等。<br>这就使得一个Android程序会有很多个不同子图，每个子图的起始点都不一样，但各个子图之间又可能会有连接，即出现子图相交的情况。因此，合理分割子图<br>以平衡性能与精确度异常重要。此外，采用多线程或反射等隐式调用方法易导致调用关系在反编译后丢失，预处理程序需要能够处理这种情况，以确保最终的控制流图能最大程度表现程序的特征。</p>
 <h1 id="AMP算法">AMP算法</h1><p>AMP(Align-Match-Prune)算法即对齐剪枝算法，是一种对特定的图结构，先降维成对应的生成树，再进行拓扑结构与节点相似度比较的算法。它不仅可以较精确地比较拓扑结构，还可以对节点的相似度进行比较，然后汇总判断。<br>AMP算法本质类似于 1.1，1.2的算法思想，针对程序控制流图的特性作了一些改进，算法的时间复杂度为 O(V3)。<br>算法过程如下：  </p>
 <pre><code><span class="number">1</span> original <span class="attribute">tree</span>:
-              T_1                               T_2
-         _____v12_____                  ________w18_______________ 
-        /             <span class="string">\</span>                /         |                <span class="string">\</span>
-       v6              v11            w4       w12              ___w17___
-      /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
-     v5             v9   v10       w1    w3  w5   w11         w13  w14 w16
-    /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
-   v1  v4          v7  v8                w2      w9  w10                w15
+             T_1                               T_2
+        _____v12_____                  ________w18_______________ 
+       /             <span class="string">\</span>                /         |                <span class="string">\</span>
+      v6              v11            w4       w12              ___w17___
+     /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
+    v5             v9   v10       w1    w3  w5   w11         w13  w14 w16
+   /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
+  v1  v4          v7  v8                w2      w9  w10                w15
+     /  <span class="string">\</span>                                      |
+    v2  v3                                    w8
+                                             /  <span class="string">\</span>
+                                            w6   w7
+
+
+<span class="number">2</span> align <span class="attribute">to</span>:
+             T_1                               T_2
+        _____v12_____                  ________w18_______________ 
+       /             <span class="string">\</span>                /         |                <span class="string">\</span>
+      v6              v11            w4       w12              ___w17___
+     /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
+    v5             v9   v10       w1    w3  w5   w11         w13  w14 w16
+   /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
+  v1  v4          v7  v8                w2      w9  w10                w15
+     /  <span class="string">\</span>                                      |
+    v2  v3                                    w8
+
+<span class="number">3</span> <span class="attribute">TDUMCST</span>:
+             T_1                               T_2
+        ____(v12)____                  ______ (w18) _____________ 
+       /             <span class="string">\</span>                /         |                <span class="string">\</span>
+     (v6)            (v11)          (w4)       (w12)           __w17____
+     /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
+   (v5)            (v9)  (v10)    (w1) (w3)  w5   (w11)      w13  w14  w16
+   /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
+(v1)  (v4)       (v7)  v8              (w2)     (w9)  (w10)             w15
       /  <span class="string">\</span>                                      |
-     v2  v3                                    w8
-                                              /  <span class="string">\</span>
-                                             w6   w7
+    (v2)  v3                                   (w8)
 
-
- <span class="number">2</span> align <span class="attribute">to</span>:
-              T_1                               T_2
-         _____v12_____                  ________w18_______________ 
-        /             <span class="string">\</span>                /         |                <span class="string">\</span>
-       v6              v11            w4       w12              ___w17___
-      /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
-     v5             v9   v10       w1    w3  w5   w11         w13  w14 w16
-    /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
-   v1  v4          v7  v8                w2      w9  w10                w15
-      /  <span class="string">\</span>                                      |
-     v2  v3                                    w8
-
- <span class="number">3</span> <span class="attribute">TDUMCST</span>:
-              T_1                               T_2
-         ____(v12)____                  ______ (w18) _____________ 
-        /             <span class="string">\</span>                /         |                <span class="string">\</span>
-      (v6)            (v11)          (w4)       (w12)           __w17____
-      /               /   <span class="string">\</span>          /  <span class="string">\</span>      /  <span class="string">\</span>            /    |    <span class="string">\</span>
-    (v5)            (v9)  (v10)    (w1) (w3)  w5   (w11)      w13  w14  w16
-    /  <span class="string">\</span>            /  <span class="string">\</span>                  |       /   <span class="string">\</span>                  |
- (v1)  (v4)       (v7)  v8              (w2)     (w9)  (w10)             w15
-       /  <span class="string">\</span>                                      |
-     (v2)  v3                                   (w8)
-
- <span class="number">4</span> prune <span class="attribute">to</span>:
-                T_1                     T_2                          
-            ____(v12)____               (w18) _____________           
-           /             <span class="string">\</span>                |                <span class="string">\</span>          
-         (v6)            (v11)           (w12)           __w17____    
-         /               /              /               /    |    <span class="string">\</span>   
-       (v5)            (v9)            w5              w13  w14  w16  
-          <span class="string">\</span>              <span class="string">\</span>                                        |   
-          (v4)            v8                                      w15 
-            <span class="string">\</span>                    
-             v3                                                          
-
-
- <span class="number">5</span> align <span class="attribute">to</span>:
-                T_1                 T_2                          
-            ____(v12)____          (w18) _____________           
-           /             <span class="string">\</span>           |                <span class="string">\</span>          
-         (v6)            (v11)      (w12)           __w17____    
-         /               /         /               /    |    <span class="string">\</span>   
-       (v5)            (v9)       w5              w13  w14  w16  
-          <span class="string">\</span>              <span class="string">\</span>                                   |   
-          (v4)            v8                                 w15  
-
-
- <span class="number">6</span> prune <span class="attribute">to</span>:
-
-
-              T_1                     T_2                          
-             (v12)____               (w18) _____________           
-                      <span class="string">\</span>                |                <span class="string">\</span>          
-                    (v11)             (w12)           __w17____    
-                     /               /               /    |    <span class="string">\</span>   
-                   (v9)             w5              w13  w14  w16  
-                      <span class="string">\</span>                                        |   
-                       v8                                      w15  
-
- <span class="number">7</span> <span class="attribute">TDUMCST</span>:
+<span class="number">4</span> prune <span class="attribute">to</span>:
                T_1                     T_2                          
-             (v12)____               (w18) _____________           
-                      <span class="string">\</span>                |                <span class="string">\</span>          
-                    (v11)             (w12)           __[w17]____    
-                     /               /               /    |      <span class="string">\</span>   
-                   (v9)             w5              w13  w14   [w16]  
-                      <span class="string">\</span>                                         |   
-                     (v8)                                     (w15)  
-
- <span class="number">8</span> Involve v8 &lt;<span class="function">-&gt;</span> w15, keep w16 
-
- <span class="number">9</span> prune <span class="attribute">to</span>:
-              T_1                      T_2                              
-             (v12)                   (w18) _____________               
-                                       |                <span class="string">\</span>              
-                                      (w12)           __[w17]____      
-                                     /               /    |      <span class="string">\</span>     
-                                    w5              w13  w14   [w16]   
+           ____(v12)____               (w18) _____________           
+          /             <span class="string">\</span>                |                <span class="string">\</span>          
+        (v6)            (v11)           (w12)           __w17____    
+        /               /              /               /    |    <span class="string">\</span>   
+      (v5)            (v9)            w5              w13  w14  w16  
+         <span class="string">\</span>              <span class="string">\</span>                                        |   
+         (v4)            v8                                      w15 
+           <span class="string">\</span>                    
+            v3                                                          
 
 
+<span class="number">5</span> align <span class="attribute">to</span>:
+               T_1                 T_2                          
+           ____(v12)____          (w18) _____________           
+          /             <span class="string">\</span>           |                <span class="string">\</span>          
+        (v6)            (v11)      (w12)           __w17____    
+        /               /         /               /    |    <span class="string">\</span>   
+      (v5)            (v9)       w5              w13  w14  w16  
+         <span class="string">\</span>              <span class="string">\</span>                                   |   
+         (v4)            v8                                 w15  
 
- <span class="number">10</span> align <span class="attribute">to</span>:
-            T_1                               T_2
-          (v12)                              (w18)
- <span class="number">11</span> done
 
- <span class="attribute">output</span>:
- isomorphism subtree <span class="attribute">match1</span>:   
-             v12 &lt;<span class="function">-&gt;</span> w18
-             v6 &lt;<span class="function">-&gt;</span> w12
-             v11 &lt;<span class="function">-&gt;</span> w4
-             v5 &lt;<span class="function">-&gt;</span> w11
-             v9 &lt;<span class="function">-&gt;</span> w3
-             v10 &lt;<span class="function">-&gt;</span> w1
-             v1 &lt;<span class="function">-&gt;</span> w10
-             v4 &lt;<span class="function">-&gt;</span> w9
-             v7 &lt;<span class="function">-&gt;</span> w2
-             v2 &lt;<span class="function">-&gt;</span> w8
- isomorphism subtree <span class="attribute">match2</span>: 
-             v8 &lt;<span class="function">-&gt;</span>w15
- <span class="string">"""                                      </span>
+<span class="number">6</span> prune <span class="attribute">to</span>:
+
+
+             T_1                     T_2                          
+            (v12)____               (w18) _____________           
+                     <span class="string">\</span>                |                <span class="string">\</span>          
+                   (v11)             (w12)           __w17____    
+                    /               /               /    |    <span class="string">\</span>   
+                  (v9)             w5              w13  w14  w16  
+                     <span class="string">\</span>                                        |   
+                      v8                                      w15  
+
+<span class="number">7</span> <span class="attribute">TDUMCST</span>:
+              T_1                     T_2                          
+            (v12)____               (w18) _____________           
+                     <span class="string">\</span>                |                <span class="string">\</span>          
+                   (v11)             (w12)           __[w17]____    
+                    /               /               /    |      <span class="string">\</span>   
+                  (v9)             w5              w13  w14   [w16]  
+                     <span class="string">\</span>                                         |   
+                    (v8)                                     (w15)  
+
+<span class="number">8</span> Involve v8 &lt;<span class="function">-&gt;</span> w15, keep w16 
+
+<span class="number">9</span> prune <span class="attribute">to</span>:
+             T_1                      T_2                              
+            (v12)                   (w18) _____________               
+                                      |                <span class="string">\</span>              
+                                     (w12)           __[w17]____      
+                                    /               /    |      <span class="string">\</span>     
+                                   w5              w13  w14   [w16]   
+
+
+
+<span class="number">10</span> align <span class="attribute">to</span>:
+           T_1                               T_2
+         (v12)                              (w18)
+<span class="number">11</span> done
+
+<span class="attribute">output</span>:
+isomorphism subtree <span class="attribute">match1</span>:   
+            v12 &lt;<span class="function">-&gt;</span> w18
+            v6 &lt;<span class="function">-&gt;</span> w12
+            v11 &lt;<span class="function">-&gt;</span> w4
+            v5 &lt;<span class="function">-&gt;</span> w11
+            v9 &lt;<span class="function">-&gt;</span> w3
+            v10 &lt;<span class="function">-&gt;</span> w1
+            v1 &lt;<span class="function">-&gt;</span> w10
+            v4 &lt;<span class="function">-&gt;</span> w9
+            v7 &lt;<span class="function">-&gt;</span> w2
+            v2 &lt;<span class="function">-&gt;</span> w8
+isomorphism subtree <span class="attribute">match2</span>: 
+            v8 &lt;<span class="function">-&gt;</span>w15
+<span class="string">"""                                      </span>
 </code></pre><p>虽然在降维成生成树的过程中有一定的信息损耗，但由于算法本身是基于最大同构子树设计，部分信息损耗不影响最终结果。另外，在基于API序列调用的流程图中，树的高度（即调用链的深度）其实有限，因此算法递归<br>深度有限，在节点数可控的情况下，算法还是比较高效的。</p>
 
       
